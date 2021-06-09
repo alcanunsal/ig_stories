@@ -21,9 +21,10 @@ class HomepageViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let destination = segue.destination as? StoryViewController {
+        if let destination = segue.destination as? DetailViewController {
             if let index = storiesCollectionView.indexPathsForSelectedItems?.first?.row {
-                destination.person = users[index]
+                //destination.username = users[index]
+                //destination.ppName = pics[index]
             } else {
                 print("segue problem")
             }
@@ -41,7 +42,7 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
         /*guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MainStoryCell", for: indexPath) as? StoryCollectionViewCell else {
                 fatalError("Unable to dequeue StoryCollectionViewCell.")
             }*/
-        let cell = storiesCollectionView.dequeueReusableCell(withReuseIdentifier: StoryCollectionViewCell.identifier, for: indexPath) as! StoryCollectionViewCell
+        let cell = storiesCollectionView.dequeueReusableCell(withReuseIdentifier: MainStoryCollectionViewCell.identifier, for: indexPath) as! MainStoryCollectionViewCell
         cell.profileImageView.image = UIImage(named: pics[indexPath.row])
         cell.profileNameLabel.text = users[indexPath.row]
         cell.profileImageView.translatesAutoresizingMaskIntoConstraints = true

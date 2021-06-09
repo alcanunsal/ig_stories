@@ -7,7 +7,7 @@
 
 import UIKit
 
-class StoryCollectionViewCell: UICollectionViewCell {
+class MainStoryCollectionViewCell: UICollectionViewCell {
 
     @IBOutlet var profileImageCircleView: UIView!
     @IBOutlet var profileImageView: UIImageView!
