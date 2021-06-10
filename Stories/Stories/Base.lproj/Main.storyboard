@@ -44,7 +44,7 @@
                                                     <rect key="frame" x="15" y="5" width="80" height="80"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lana" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aEc-hW-2SG" userLabel="Profile Image View">
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lana" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aEc-hW-2SG" userLabel="Profile Image View">
                                                             <rect key="frame" x="5" y="5" width="70" height="70"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" secondItem="aEc-hW-2SG" secondAttribute="height" multiplier="1:1" id="xTM-KM-DKI"/>
@@ -82,7 +82,7 @@
                                             <outlet property="profileImageCircleView" destination="kCA-Qk-DdL" id="t7i-f5-U8e"/>
                                             <outlet property="profileImageView" destination="aEc-hW-2SG" id="TOY-FZ-ubO"/>
                                             <outlet property="profileNameLabel" destination="xR4-9e-Sb8" id="kKu-Y4-rkj"/>
-                                            <segue destination="TMl-88-Mip" kind="presentation" modalPresentationStyle="fullScreen" id="0nJ-VK-Uz0"/>
+                                            <segue destination="TMl-88-Mip" kind="presentation" identifier="HomeToStoryDetailSegue" modalPresentationStyle="fullScreen" id="0nJ-VK-Uz0"/>
                                         </connections>
                                     </collectionViewCell>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Ibf-97-1An">
@@ -157,10 +157,13 @@
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="etiler" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nCX-5H-ZDj">
                                                     <rect key="frame" x="0.0" y="0.0" width="414" height="839"/>
                                                 </imageView>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="jC6-eK-qNy">
+                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="839"/>
+                                                </activityIndicatorView>
                                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="SPe-NX-7NB">
                                                     <rect key="frame" x="10" y="30" width="404" height="58.5"/>
                                                     <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lana" translatesAutoresizingMaskIntoConstraints="NO" id="BKd-Wy-5fn">
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lana" translatesAutoresizingMaskIntoConstraints="NO" id="BKd-Wy-5fn">
                                                             <rect key="frame" x="0.0" y="0.0" width="58.5" height="58.5"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" secondItem="BKd-Wy-5fn" secondAttribute="height" multiplier="1:1" id="B0g-50-1qv"/>
@@ -211,7 +214,11 @@
                                                 <constraint firstAttribute="trailing" secondItem="SPe-NX-7NB" secondAttribute="trailing" id="9Vf-Qb-pmL"/>
                                                 <constraint firstItem="SPe-NX-7NB" firstAttribute="leading" secondItem="iJf-MZ-mpr" secondAttribute="leading" constant="10" id="BKE-Sx-GQK"/>
                                                 <constraint firstAttribute="trailing" secondItem="yl1-x0-FV4" secondAttribute="trailing" constant="10" id="PsS-BH-3aY"/>
+                                                <constraint firstItem="jC6-eK-qNy" firstAttribute="top" secondItem="nCX-5H-ZDj" secondAttribute="top" id="QVV-mT-Ii0"/>
+                                                <constraint firstItem="jC6-eK-qNy" firstAttribute="bottom" secondItem="nCX-5H-ZDj" secondAttribute="bottom" id="R5y-9r-ehF"/>
+                                                <constraint firstItem="jC6-eK-qNy" firstAttribute="trailing" secondItem="nCX-5H-ZDj" secondAttribute="trailing" id="Wgy-QS-qJf"/>
                                                 <constraint firstItem="SPe-NX-7NB" firstAttribute="height" secondItem="iJf-MZ-mpr" secondAttribute="height" multiplier="0.07" id="aNK-ur-bnC"/>
+                                                <constraint firstItem="jC6-eK-qNy" firstAttribute="leading" secondItem="nCX-5H-ZDj" secondAttribute="leading" id="h4e-Cz-AGC"/>
                                                 <constraint firstItem="yl1-x0-FV4" firstAttribute="top" secondItem="iJf-MZ-mpr" secondAttribute="top" constant="10" id="jsI-fJ-LiH"/>
                                                 <constraint firstItem="0aN-da-bX8" firstAttribute="top" secondItem="nCX-5H-ZDj" secondAttribute="top" id="lB0-aS-ajD"/>
                                                 <constraint firstItem="0aN-da-bX8" firstAttribute="leading" secondItem="nCX-5H-ZDj" secondAttribute="leading" id="lI5-SX-n4k"/>
@@ -224,6 +231,7 @@
                                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <size key="customSize" width="414" height="839"/>
                                         <connections>
+                                            <outlet property="activityIndicator" destination="jC6-eK-qNy" id="HeX-2j-hWT"/>
                                             <outlet property="fsStoryImageView" destination="nCX-5H-ZDj" id="NLg-PZ-cRp"/>
                                             <outlet property="gradientView" destination="0aN-da-bX8" id="Mu0-XP-i6c"/>
                                             <outlet property="ppImageView" destination="BKd-Wy-5fn" id="vg7-Mw-riW"/>

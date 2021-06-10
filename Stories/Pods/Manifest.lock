@@ -1,16 +1,24 @@
 PODS:
+  - Alamofire (5.4.1)
+  - AlamofireImage (4.2.0):
+    - Alamofire (~> 5.4)
   - AnimatedCollectionViewLayout (1.1.0)
 
 DEPENDENCIES:
+  - AlamofireImage (~> 4.1)
   - AnimatedCollectionViewLayout
 
 SPEC REPOS:
   trunk:
+    - Alamofire
+    - AlamofireImage
     - AnimatedCollectionViewLayout
 
 SPEC CHECKSUMS:
+  Alamofire: 2291f7d21ca607c491dd17642e5d40fdcda0e65c
+  AlamofireImage: 34a2d90b0e5fe6a5605f85ae4b7b01e784c60192
   AnimatedCollectionViewLayout: 0c1a38c4be115c525c887be183fc91ef65737c5d
 
-PODFILE CHECKSUM: c87c0cfd40c9a097120f09fb19163d2fd9e1d39f
+PODFILE CHECKSUM: 1101d05781196a01113929f801b996b06f5427a1
 
 COCOAPODS: 1.10.0

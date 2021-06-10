@@ -5,7 +5,7 @@ target 'Stories' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   pod 'AnimatedCollectionViewLayout'
-
+  pod 'AlamofireImage', '~> 4.1'
   # Pods for Stories
 
   target 'StoriesTests' do

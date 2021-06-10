@@ -42,7 +42,25 @@ class MainStoryCollectionViewCell: UICollectionViewCell {
         //profileImageCircleView.layer.borderColor = UIColor.purple.cgColor
         profileImageView.layer.masksToBounds = true
         profileImageView.clipsToBounds = true
+        profileImageView.translatesAutoresizingMaskIntoConstraints = true
         //profileImageCircleView.layer.borderColor = UIColor.green.cgColor
+    }
+    
+    func configureCell(with profile: Profile) {
+        setImage(imageView: profileImageView, strURL: profile.profilePicUrl)
+        profileNameLabel.text = profile.username
+    }
+    
+    func setImage(imageView: UIImageView, strURL: String) {
+        if let url = URL(string:strURL) {
+            imageView.af.setImage(withURL: url ,
+                                  placeholderImage: UIImage(named: "gray"),
+                                  filter: nil,
+                                  imageTransition: .crossDissolve(0.2),
+                                  completion: nil)
+        } else {
+            imageView.image = UIImage(named: "gray")
+        }
     }
     
     override func layoutSubviews() {
@@ -53,6 +71,7 @@ class MainStoryCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         profileImageView.image = nil
+        profileNameLabel.text = ""
         configureSubviews()
     }
     

@@ -16,6 +16,9 @@
 		69BEA40A267143F1000A7F73 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BEA409267143F1000A7F73 /* DetailViewController.swift */; };
 		69BEA40F26714544000A7F73 /* DetailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BEA40E26714544000A7F73 /* DetailCollectionViewCell.swift */; };
 		69BEA4182671616E000A7F73 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BEA4172671616D000A7F73 /* Extensions.swift */; };
+		69BEA41D267224F9000A7F73 /* StoriesData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BEA41C267224F9000A7F73 /* StoriesData.swift */; };
+		69BEA422267227AB000A7F73 /* StoryData.json in Resources */ = {isa = PBXBuildFile; fileRef = 69BEA421267227AB000A7F73 /* StoryData.json */; };
+		69BEA42726722E10000A7F73 /* JSONReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BEA42626722E10000A7F73 /* JSONReader.swift */; };
 		69DA71AC2670C44C00C6CE90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DA71AB2670C44C00C6CE90 /* AppDelegate.swift */; };
 		69DA71AE2670C44C00C6CE90 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DA71AD2670C44C00C6CE90 /* SceneDelegate.swift */; };
 		69DA71B02670C44C00C6CE90 /* HomepageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DA71AF2670C44C00C6CE90 /* HomepageViewController.swift */; };
@@ -53,6 +56,9 @@
 		69BEA409267143F1000A7F73 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		69BEA40E26714544000A7F73 /* DetailCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCollectionViewCell.swift; sourceTree = "<group>"; };
 		69BEA4172671616D000A7F73 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		69BEA41C267224F9000A7F73 /* StoriesData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesData.swift; sourceTree = "<group>"; };
+		69BEA421267227AB000A7F73 /* StoryData.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = StoryData.json; sourceTree = "<group>"; };
+		69BEA42626722E10000A7F73 /* JSONReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONReader.swift; sourceTree = "<group>"; };
 		69DA71A82670C44C00C6CE90 /* Stories.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stories.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69DA71AB2670C44C00C6CE90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		69DA71AD2670C44C00C6CE90 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -209,6 +215,9 @@
 		69DA71F32670C5FF00C6CE90 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				69BEA41C267224F9000A7F73 /* StoriesData.swift */,
+				69BEA421267227AB000A7F73 /* StoryData.json */,
+				69BEA42626722E10000A7F73 /* JSONReader.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -341,6 +350,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				69DA71B82670C45000C6CE90 /* LaunchScreen.storyboard in Resources */,
+				69BEA422267227AB000A7F73 /* StoryData.json in Resources */,
 				69DA71B52670C45000C6CE90 /* Assets.xcassets in Resources */,
 				69DA71B32670C44C00C6CE90 /* Main.storyboard in Resources */,
 			);
@@ -477,10 +487,12 @@
 				69DA72082670D1F100C6CE90 /* MainStoryCollectionViewCell.swift in Sources */,
 				69DA71B02670C44C00C6CE90 /* HomepageViewController.swift in Sources */,
 				69DA71AC2670C44C00C6CE90 /* AppDelegate.swift in Sources */,
+				69BEA42726722E10000A7F73 /* JSONReader.swift in Sources */,
 				69DA71AE2670C44C00C6CE90 /* SceneDelegate.swift in Sources */,
 				69DA71DF2670C4D200C6CE90 /* Constants.swift in Sources */,
 				69BEA4182671616E000A7F73 /* Extensions.swift in Sources */,
 				69BEA3DE2670F09F000A7F73 /* SegmentedProgressBar.swift in Sources */,
+				69BEA41D267224F9000A7F73 /* StoriesData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

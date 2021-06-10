@@ -10,6 +10,9 @@ import UIKit
 class HomepageViewController: UIViewController {
     
     @IBOutlet var storiesCollectionView: UICollectionView!
+    
+    private var profilesData: [Profile]?
+    
     let pics = ["lana", "wild", "lana", "lana", "wild", "lana", "wild", "lana", "lana", "wild"]
     let users = ["alcanunsal", "hamzaisiktas", "mr.hoser", "ertbulbull", "tunga.gungor", "codeway", "serbest", "dizdarkosu", "muhittin", "thepitirciks"]
     override func viewDidLoad() {
@@ -17,17 +20,40 @@ class HomepageViewController: UIViewController {
         // Do any additional setup after loading the view.
         storiesCollectionView.dataSource = self
         storiesCollectionView.delegate = self
+        getStoriesData()
         //storiesCollectionView.register(StoryCollectionViewCell.self, forCellWithReuseIdentifier: StoryCollectionViewCell.identifier)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "HomeToStoryDetailSegue" {
+            if let vc = segue.destination as? DetailViewController {
+                vc.profiles = profilesData!
+                if let cell = sender as? DetailCollectionViewCell {
+                    print("profileSelected:", profilesData?.firstIndex { $0.username == cell.userNameLabel.text})
+                    vc.profileSelected = profilesData?.firstIndex { $0.username == cell.userNameLabel.text}
+                }
+            }
+        }
         if let destination = segue.destination as? DetailViewController {
             if let index = storiesCollectionView.indexPathsForSelectedItems?.first?.row {
-                //destination.username = users[index]
-                //destination.ppName = pics[index]
+                destination.profiles = profilesData!
+                destination.profileSelected = index
             } else {
                 print("segue problem")
             }
+        }
+    }
+    
+    func getStoriesData() {
+        let jsonData = JSONReader().readLocalJSONFile(forFile: "StoryData")
+        if let data = jsonData {
+            if let obj:Profiles = JSONReader().parseJSON(safeData: jsonData!) {
+                profilesData = obj.profiles
+            } else {
+                print("parse error json")
+            }
+        } else {
+            print("jsonerr")
         }
     }
 
@@ -35,18 +61,19 @@ class HomepageViewController: UIViewController {
 
 extension HomepageViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return pics.count
+        return profilesData?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        /*guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MainStoryCell", for: indexPath) as? StoryCollectionViewCell else {
-                fatalError("Unable to dequeue StoryCollectionViewCell.")
-            }*/
         let cell = storiesCollectionView.dequeueReusableCell(withReuseIdentifier: MainStoryCollectionViewCell.identifier, for: indexPath) as! MainStoryCollectionViewCell
-        cell.profileImageView.image = UIImage(named: pics[indexPath.row])
-        cell.profileNameLabel.text = users[indexPath.row]
-        cell.profileImageView.translatesAutoresizingMaskIntoConstraints = true
+        cell.configureCell(with: profilesData![indexPath.row])
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let cell = storiesCollectionView.cellForItem(at: indexPath) {
+            self.performSegue(withIdentifier: "HomeToStoryDetailSegue", sender: cell)
+        }
     }
     
     

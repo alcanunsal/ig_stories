@@ -1,0 +1,135 @@
+{
+    "profiles": [
+        {
+            "username": "micheal_scott",
+            "profilePicUrl": "https://miro.medium.com/max/500/1*xDIevNE7HEMiJQVTYg0qDQ.png",
+            "storyCount": 2,
+            "storiesSeenCount": 0,
+            "stories": [
+                {
+                    "storyId": 0,
+                    "contentType":0,
+                    "contentUrl":"https://m.media-amazon.com/images/M/MV5BMjE5OTg4MDU3N15BMl5BanBnXkFtZTcwNTM1MjU5Mw@@._V1_UY1200_CR85,0,630,1200_AL_.jpg",
+                    "timestamp": "12h"
+                },
+                {
+                    "storyId": 1,
+                    "contentType":0,
+                    "contentUrl":"https://playtusu.com/wp-content/uploads/2019/10/5-Sales-Management-Lessons-From-The-Office.jpg",
+                    "timestamp": "10h"
+                }
+                
+            ]
+        },
+        {
+            "username": "dwight_schrute",
+            "profilePicUrl": "https://static.wikia.nocookie.net/theoffice/images/c/c5/Dwight_.jpg/revision/latest?cb=20170701082424",
+            "storyCount": 1,
+            "storiesSeenCount": 0,
+            "stories": [
+                {
+                    "storyId": 2,
+                    "contentType":0,
+                    "contentUrl":"https://images.squarespace-cdn.com/content/v1/59da5d13cf81e005db71d925/1513171418491-XQGKXDDIZ8JDUWK33RJC/ke17ZwdGBToddI8pDm48kF2cXuhdIZERqYvcMJT5RW97gQa3H78H3Y0txjaiv_0fDoOvxcdMmMKkDsyUqMSsMWxHk725yiiHCCLfrh8O1z5QHyNOqBUUEtDDsRWrJLTmzUsryC7riGV7bTeYhg5SetTXjjIzJ0WoiOF1vgid2UTyEpg4w5t0gn782c25JoVB/dwight.jpg?format=1000w",
+                    "timestamp": "1h"
+                },
+                {
+                    "storyId": 3,
+                    "contentType":0,
+                    "contentUrl":"https://pbcdn1.podbean.com/imglogo/ep-logo/pbblog5285950/ValentinesDay.jpg",
+                    "timestamp": "56m"
+                },
+                {
+                    "storyId": 4,
+                    "contentType":0,
+                    "contentUrl":"https://www.denofgeek.com/wp-content/uploads/2020/06/the-office-dwight-christmas.jpg?fit=1300%2C684",
+                    "timestamp": "52m"
+                }
+                
+            ]
+        },
+        {
+            "username": "stanley_h",
+            "profilePicUrl": "https://static.wikia.nocookie.net/theoffice/images/d/d8/Florida_stanley.jpg/revision/latest/top-crop/width/360/height/360?cb=20120923220431",
+            "storyCount": 1,
+            "storiesSeenCount": 0,
+            "stories": [
+                {
+                    "storyId": 5,
+                    "contentType":0,
+                    "contentUrl":"https://productplacementblog.com/wp-content/uploads/2019/06/Wegmans-Cola-Enjoyed-by-Leslie-David-Baker-Stanley-Hudson-in-The-Office.jpg",
+                    "timestamp": "12h"
+                }
+            ]
+        },
+        {
+            "username": "creed",
+            "profilePicUrl": "https://www.goldminemag.com/.image/ar_4:3%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTY4MzU1MTAwODc5ODkwMzkw/creed-bratton.jpg",
+            "storyCount": 3,
+            "storiesSeenCount": 0,
+            "stories": [
+                {
+                    "storyId": 6,
+                    "contentType":0,
+                    "contentUrl":"https://img.buzzfeed.com/buzzfeed-static/static/2018-02/15/16/campaign_images/buzzfeed-prod-fastlane-01/tell-us-your-most-burning-questions-for-the-offic-2-26374-1518730187-2_dblbig.jpg?resize=1200:*",
+                    "timestamp": "10m"
+                },
+                {
+                    "storyId": 7,
+                    "contentType":0,
+                    "contentUrl":"https://imgix.bustle.com/uploads/image/2020/1/15/f5938b3c-1687-4478-bd19-25b5ab3884a2-creed-the-office-halloween.png?w=1200&h=630&fit=crop&crop=faces&fm=jpg",
+                    "timestamp": "9m"
+                },
+                {
+                    "storyId": 8,
+                    "contentType":0,
+                    "contentUrl":"https://brobible.com/wp-content/uploads/2018/10/best-of-creed-the-office.jpg?quality=90&w=650",
+                    "timestamp": "5m"
+                }
+                
+            ]
+        },
+        {
+            "username": "jim_halpert",
+            "profilePicUrl": "https://i1.sndcdn.com/avatars-FgBTIFX5mZrCQb3N-qokd2w-t500x500.jpg",
+            "storyCount": 2,
+            "storiesSeenCount": 0,
+            "stories": [
+                {
+                    "storyId": 9,
+                    "contentType":0,
+                    "contentUrl":"https://geekyuzbir.com/wp-content/uploads/2020/09/27-times-jim-and-dwight-were-perfect-frenemies-on-2-20314-1442959086-6_dblbig-585x329.jpg",
+                    "timestamp": "12h"
+                },
+                {
+                    "storyId": 10,
+                    "contentType":0,
+                    "contentUrl":"https://media.glamour.com/photos/5696d57201ed531c6f00b205/master/w_1600%2Cc_limit/sex-love-life-blogs-smitten-2012-02-21-0221-jim-and-pam-sm.jpg",
+                    "timestamp": "10h"
+                }
+                
+            ]
+        },
+        {
+            "username": "kevin_malone",
+            "profilePicUrl": "https://openpsychometrics.org/tests/characters/test-resources/pics/TO/9.jpg",
+            "storyCount": 2,
+            "storiesSeenCount": 0,
+            "stories": [
+                {
+                    "storyId": 11,
+                    "contentType":0,
+                    "contentUrl":"https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F6%2F2020%2F02%2Foffice-2-2000.jpg&q=85",
+                    "timestamp": "5h"
+                },
+                {
+                    "storyId": 12,
+                    "contentType":0,
+                    "contentUrl":"https://tvline.com/wp-content/uploads/2020/03/the-office-cold-opens-costume-contest.jpg?w=620",
+                    "timestamp": "4h"
+                }
+                
+            ]
+        }
+    ]
+}
