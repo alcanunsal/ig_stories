@@ -159,10 +159,6 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         configureProgressBar(numSegments: profile!.stories.count, durations: durations)
     }
     
-    @IBAction func didTapCell(_ sender: UITapGestureRecognizer) {
-        print("touched")
-    }
-    
     func setImage(imageView: UIImageView, strURL: String, isPp: Bool = false) {
         if !isPp {
             activityIndicator.startAnimating()
@@ -228,10 +224,10 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
     override func prepareForReuse() {
         super.prepareForReuse()
         progressBar?.isPaused = true
-        timestampLabel.text = ""
-        userNameLabel.text = ""
-        ppImageView.image = nil
-        fsStoryImageView.image = nil
+        //timestampLabel.text = ""
+        //userNameLabel.text = ""
+        //ppImageView.image = nil
+        //fsStoryImageView.image = nil
         ppImageView.af.cancelImageRequest()
         progressBar?.removeFromSuperview()
         progressBar = nil
@@ -239,7 +235,10 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
     }
     
     @IBAction func closeButtonTapped(_ sender: Any) {
-        delegate?.dismissStories()
+        if profile!.storiesSeenCount < profile!.stories.count-1 {
+            profile?.storiesSeenCount += 1
+        }
+        delegate?.dismissDetailViewController(currentStoryGroup: self.profile!)
     }
     
     
@@ -271,4 +270,11 @@ extension DetailCollectionViewCell: SegmentedProgressBarDelegate {
     }
     
     
+}
+
+
+protocol DetailCellDelegate {
+    func goToPreviousStoryGroup(currentStoryGroup:Profile)
+    func goToNextStoryGroup(currentStoryGroup:Profile)
+    func dismissDetailViewController(currentStoryGroup:Profile)
 }

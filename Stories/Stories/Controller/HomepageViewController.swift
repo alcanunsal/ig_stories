@@ -13,8 +13,6 @@ class HomepageViewController: UIViewController {
     
     private var profilesData: [Profile]?
     
-    let pics = ["lana", "wild", "lana", "lana", "wild", "lana", "wild", "lana", "lana", "wild"]
-    let users = ["alcanunsal", "hamzaisiktas", "mr.hoser", "ertbulbull", "tunga.gungor", "codeway", "serbest", "dizdarkosu", "muhittin", "thepitirciks"]
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -25,19 +23,12 @@ class HomepageViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "HomeToStoryDetailSegue" {
-            if let vc = segue.destination as? DetailViewController {
-                vc.profiles = profilesData!
-                if let cell = sender as? DetailCollectionViewCell {
-                    print("profileSelected:", profilesData?.firstIndex { $0.username == cell.userNameLabel.text})
-                    vc.profileSelected = profilesData?.firstIndex { $0.username == cell.userNameLabel.text}
-                }
-            }
-        }
+
         if let destination = segue.destination as? DetailViewController {
             if let index = storiesCollectionView.indexPathsForSelectedItems?.first?.row {
                 destination.profiles = profilesData!
                 destination.profileSelected = index
+                destination.delegate = self
             } else {
                 print("segue problem")
             }
@@ -47,7 +38,7 @@ class HomepageViewController: UIViewController {
     func getStoriesData() {
         let jsonData = JSONReader().readLocalJSONFile(forFile: "StoryData")
         if let data = jsonData {
-            if let obj:Profiles = JSONReader().parseJSON(safeData: jsonData!) {
+            if let obj:Profiles = JSONReader().parseJSON(safeData: data) {
                 profilesData = obj.profiles
             } else {
                 print("parse error json")
@@ -75,9 +66,15 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
             self.performSegue(withIdentifier: "HomeToStoryDetailSegue", sender: cell)
         }
     }
-    
-    
+}
+
+
+extension HomepageViewController: DetailViewControllerDelegate {
+    func detailViewControllerWillDismiss(data: [Profile]) {
+        self.profilesData = data
+        print(data)
+        storiesCollectionView.reloadData()
+    }
     
     
 }
-

@@ -15,6 +15,7 @@ class DetailViewController: UIViewController {
     var profileSelected: Int?
     var initialTouchPoint = CGPoint(x: 0, y: 0)
     fileprivate var needsDelayedScrolling = false
+    var delegate: DetailViewControllerDelegate?
     
     override func viewWillAppear(_ animated: Bool)
     {
@@ -75,7 +76,12 @@ class DetailViewController: UIViewController {
                     self.view.frame = CGRect(x: 0, y: max(0, touchPoint.y-initialTouchPoint.y), width: self.view.frame.size.width, height: self.view.frame.size.height)
                 }
             case .ended:
-                if touchPoint.y - initialTouchPoint.y > 300 {
+                if touchPoint.y - initialTouchPoint.y > 100 {
+                    if let cellShown = detailCollectionView.visibleCells[0] as? DetailCollectionViewCell {
+                        profiles![detailCollectionView.indexPathsForVisibleItems[0].row] = cellShown.profile!
+                    }
+                    
+                    delegate?.detailViewControllerWillDismiss(data: profiles!)
                     self.dismiss(animated: true, completion: nil)
                 } else {
                     UIView.animate(withDuration: 0.5, animations: {
@@ -148,10 +154,13 @@ extension DetailViewController: UICollectionViewDataSource, UICollectionViewDele
 }
 
 extension DetailViewController: DetailCellDelegate {
-    func dismissStories() {
+    
+    func dismissDetailViewController(currentStoryGroup: Profile) {
+        profiles![profiles!.firstIndex{$0.username == currentStoryGroup.username}!] = currentStoryGroup
+        delegate?.detailViewControllerWillDismiss(data: profiles!)
         self.dismiss(animated: true, completion: nil)
     }
-    
+
     func goToPreviousStoryGroup(currentStoryGroup:Profile) {
         print("gotoPrevStoryGroup")
         let currentIndexPath = detailCollectionView.indexPathsForVisibleItems[0]
@@ -196,8 +205,6 @@ extension DetailViewController: DetailCellDelegate {
     
 }
 
-protocol DetailCellDelegate {
-    func goToPreviousStoryGroup(currentStoryGroup:Profile)
-    func goToNextStoryGroup(currentStoryGroup:Profile)
-    func dismissStories()
+protocol DetailViewControllerDelegate {
+    func detailViewControllerWillDismiss(data: [Profile])
 }
