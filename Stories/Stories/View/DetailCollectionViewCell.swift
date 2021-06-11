@@ -47,6 +47,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
     }
   
     @objc func cellTapped(sender: UITapGestureRecognizer) {
+        print("cellTapped:", profile)
         if sender.state == .ended {
             progressBar?.isHidden = false
             progressBar?.isPaused = false
@@ -65,20 +66,20 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
                     storyChangedByTapping = false
                 } else {
                     storyChangedByTapping = true
-                    delegate?.goToPreviousStoryGroup()
+                    delegate?.goToPreviousStoryGroup(currentStoryGroup: profile!)
                     storyChangedByTapping = false
                 }
             } else {
-                if profile!.storiesSeenCount < profile!.stories.count-1 {
+                if profile!.storiesSeenCount <= profile!.stories.count-1 {
                     profile!.storiesSeenCount += 1
                     storyChangedByTapping = true
                     goToNextStory()
                     storyChangedByTapping = false
                 } else {
-                    profile?.storiesSeenCount+=1
+                    //profile?.storiesSeenCount+=1
                     storyChangedByTapping = true
-                    delegate?.goToNextStoryGroup()
-                    //goToNextStory()
+                    progressBar?.isPaused = true
+                    delegate?.goToNextStoryGroup(currentStoryGroup: profile!)
                     storyChangedByTapping = false
                 }
             }
@@ -86,7 +87,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
     }
     
     func goToNextStory(){
-        if profile?.storiesSeenCount != profile?.stories.count {
+        if profile!.storiesSeenCount < profile!.stories.count {
             setImage(imageView: ppImageView, strURL: profile!.profilePicUrl, isPp: true)
             setImage(imageView: fsStoryImageView, strURL: profile!.stories[profile!.storiesSeenCount].contentUrl)
             timestampLabel.text = profile!.stories[profile!.storiesSeenCount].timestamp
@@ -135,11 +136,16 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
     }
     
     func configureCell() {
-        print("configureCell:", profile?.username)
+        print("configureCell:", profile!.username, profile!.storiesSeenCount)
         userNameLabel.text = profile!.username
         setImage(imageView: ppImageView, strURL: profile!.profilePicUrl, isPp: true)
-        setImage(imageView: fsStoryImageView, strURL: profile!.stories[profile!.storiesSeenCount].contentUrl)
-        timestampLabel.text = profile!.stories[profile!.storiesSeenCount].timestamp
+        var currentStoryIndex = profile!.stories.count-1
+        if profile!.storiesSeenCount < profile!.stories.count-1 {
+            currentStoryIndex = profile!.storiesSeenCount
+        }
+        profile?.storiesSeenCount = currentStoryIndex
+        setImage(imageView: fsStoryImageView, strURL: profile!.stories[currentStoryIndex].contentUrl)
+        timestampLabel.text = profile!.stories[currentStoryIndex].timestamp
         gradientView.addGradientBackground(firstColor: getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? getRandomColor())
         var durations:[Double] = []
         for story in profile!.stories {
@@ -150,7 +156,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
                 durations.append(10.0)
             }
         }
-        configureProgressBar(numSegments: profile!.stories.count, durations: durations, currentStory: profile!.storiesSeenCount)
+        configureProgressBar(numSegments: profile!.stories.count, durations: durations, currentStory: currentStoryIndex)
     }
     
     @IBAction func didTapCell(_ sender: UITapGestureRecognizer) {
@@ -182,7 +188,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
     
     
     func configureProgressBar(numSegments: Int, durations: [Double], currentStory: Int) {
-        print("configureProgressBar")
+        print("configureProgressBar:", profile!.username, currentStory)
         self.progressBar = SegmentedProgressBar(numberOfSegments: numSegments, duration: durations[0])
         self.progressBar!.topColor = UIColor.white
         self.progressBar!.delegate = self
@@ -204,18 +210,24 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
                                                    constant: 0)
         progressContainerView.addConstraint(constraintTrailing)
         progressContainerView.addConstraint(constraintCenterX)
-        if profile!.storiesSeenCount > 0 {
-            print("configureProgressBar2")
-            for _ in 0...currentStory {
+        self.progressBar!.startAnimation(withDelay: 0.4)
+        if currentStory > 0 {
+            var currentIndex = currentStory
+            print("configureProgressBar CurrentStory>0:", currentStory)
+            if currentStory >= (profile!.stories.count) {
+                currentIndex = profile!.stories.count-1
+            }
+            print("configureProgressBar CurrentStory>0 2:", currentIndex)
+            for _ in 1...currentIndex {
                 self.progressBar!.skip()
             }
         }
-        self.progressBar!.startAnimation(withDelay: 0.3)
-        self.progressBar!.isPaused = false
+        //self.progressBar!.isPaused = false
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        progressBar?.isPaused = true
         timestampLabel.text = ""
         userNameLabel.text = ""
         ppImageView.image = nil
@@ -244,7 +256,9 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
 extension DetailCollectionViewCell: SegmentedProgressBarDelegate {
     func segmentedProgressBarChangedIndex(index: Int) {
         if !storyChangedByTapping {
-            profile?.storiesSeenCount += 1
+            if profile!.storiesSeenCount < profile!.stories.count-1 {
+                profile?.storiesSeenCount += 1
+            }
             setImage(imageView: fsStoryImageView, strURL: profile!.stories[index].contentUrl)
             timestampLabel.text = profile!.stories[index].timestamp
             gradientView.addGradientBackground(firstColor: getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? getRandomColor())
@@ -253,7 +267,7 @@ extension DetailCollectionViewCell: SegmentedProgressBarDelegate {
     
     func segmentedProgressBarFinished() {
         //prepareForReuse()
-        delegate?.goToNextStoryGroup()
+        delegate?.goToNextStoryGroup(currentStoryGroup: profile!)
     }
     
     

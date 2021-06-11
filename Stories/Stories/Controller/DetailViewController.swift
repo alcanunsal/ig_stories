@@ -22,7 +22,6 @@ class DetailViewController: UIViewController {
         self.needsDelayedScrolling = true
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         detailCollectionView.dataSource = self
@@ -34,11 +33,17 @@ class DetailViewController: UIViewController {
         view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handleDismiss)))
     }
     
+    /*override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        self.needsDelayedScrolling = true
+    }*/
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if self.needsDelayedScrolling {
             self.needsDelayedScrolling = false
             detailCollectionView.scrollToItem(at: IndexPath(row: profileSelected!, section: 0), at: .right, animated: false)
+            detailCollectionView.setNeedsLayout()
         }
         
     }
@@ -97,32 +102,6 @@ class DetailViewController: UIViewController {
     
     @IBAction func didTapView(_ sender: UITapGestureRecognizer) {
         print("caught in cv")
-        /*if sender.state == .began {
-            let cell = detailCollectionView.cellForItem(at: detailCollectionView.indexPathsForVisibleItems[0]) as! DetailCollectionViewCell
-            cell.progressBar.isPaused = true
-            cell.progressBar.isHidden = true
-        }
-        if sender.state == .ended {
-            let indexPath = detailCollectionView.indexPathsForVisibleItems[0]
-            let touchPoint = sender.location(in: self.view)
-            if touchPoint.x < self.view.bounds.size.width/3 {
-                if indexPath.row != 0 {
-                    let nextCellIndexPath = IndexPath(row: indexPath.row+1, section: indexPath.section)
-                    detailCollectionView.scrollToItem(at: nextCellIndexPath, at: .right, animated: true)
-                } else {
-                    print("dismiss view 2")
-                }
-                let previousCellIndexPath = IndexPath(row: indexPath.row-1, section: indexPath.section)
-                detailCollectionView.scrollToItem(at: previousCellIndexPath, at: .left, animated: true)
-            } else {
-                if indexPath.row != profiles!.count-1 {
-                    let nextCellIndexPath = IndexPath(row: indexPath.row+1, section: indexPath.section)
-                    detailCollectionView.scrollToItem(at: nextCellIndexPath, at: .right, animated: true)
-                } else {
-                    print("dismiss view 3")
-                }
-            }
-        }*/
     }
 
 }
@@ -136,9 +115,12 @@ extension DetailViewController: UICollectionViewDataSource, UICollectionViewDele
         let cell = detailCollectionView.dequeueReusableCell(withReuseIdentifier: "CubicCell", for: indexPath) as! DetailCollectionViewCell
         //cell.backgroundColor = .clear
         cell.profile = profiles![indexPath.row]
-        print("cellforitemat:", cell.profile?.username, indexPath)
+        print("cellforitemat:", cell.profile!.username, cell.profile!.storiesSeenCount)
         cell.configureCell()
         cell.delegate = self
+        if cell.profile?.username == "dwight_schrute" {
+            print("cellprofile:", cell.profile!)
+        }
         return cell
     }
     
@@ -158,21 +140,28 @@ extension DetailViewController: DetailCellDelegate {
         self.dismiss(animated: true, completion: nil)
     }
     
-    func goToPreviousStoryGroup() {
+    func goToPreviousStoryGroup(currentStoryGroup:Profile) {
+        print("gotoPrevStoryGroup")
         let currentIndexPath = detailCollectionView.indexPathsForVisibleItems[0]
+        print("currentindex:",profiles![currentIndexPath.row].username, profiles![currentIndexPath.row].storiesSeenCount)
+        //profiles![currentIndexPath.row] = currentStoryGroup
+        profiles![profiles!.firstIndex{$0.username == currentStoryGroup.username}!] = currentStoryGroup
         if currentIndexPath.row == 0{
             self.dismiss(animated: true, completion: nil)
         } else {
             let prevCellIndexPath = IndexPath(row: currentIndexPath.row-1, section: currentIndexPath.section)
+            let rect = self.detailCollectionView.layoutAttributesForItem(at: prevCellIndexPath)?.frame
             detailCollectionView.layoutIfNeeded()
-            DispatchQueue.main.async {
-                self.detailCollectionView.scrollToItem(at: prevCellIndexPath, at: .left, animated: true)
-            }
+            self.detailCollectionView.scrollRectToVisible(rect!, animated: true)
         }
     }
     
-    func goToNextStoryGroup() {
+    func goToNextStoryGroup(currentStoryGroup:Profile) {
+        print("gotoNextStoryGroup")
         let currentIndexPath = detailCollectionView.indexPathsForVisibleItems[0]
+        print("currentindex:",profiles![currentIndexPath.row].username, profiles![currentIndexPath.row].storiesSeenCount)
+        profiles![profiles!.firstIndex{$0.username == currentStoryGroup.username}!] = currentStoryGroup
+        //profiles![currentIndexPath.row] = currentStoryGroup
         if currentIndexPath.row == profiles!.count-1 {
             self.dismiss(animated: true, completion: nil)
         } else {
@@ -191,7 +180,7 @@ extension DetailViewController: DetailCellDelegate {
 }
 
 protocol DetailCellDelegate {
-    func goToPreviousStoryGroup()
-    func goToNextStoryGroup()
+    func goToPreviousStoryGroup(currentStoryGroup:Profile)
+    func goToNextStoryGroup(currentStoryGroup:Profile)
     func dismissStories()
 }
