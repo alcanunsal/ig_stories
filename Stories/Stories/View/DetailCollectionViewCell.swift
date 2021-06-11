@@ -117,7 +117,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
         tapGesture.delegate = self
         addGestureRecognizer(tapGesture)
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
-        //longPressGesture.minimumPressDuration = 0.5
+        longPressGesture.minimumPressDuration = 0.5
         longPressGesture.delaysTouchesBegan = false
         longPressGesture.delegate = self
         addGestureRecognizer(longPressGesture)
@@ -133,6 +133,9 @@ class DetailCollectionViewCell: UICollectionViewCell {
     
     @objc func handleDismiss(sender: UISwipeGestureRecognizer) {
         if sender.direction == .down {
+            if profile!.storiesSeenCount < profile!.stories.count-1 {
+                profile?.storiesSeenCount += 1
+            }
             delegate?.dismissDetailViewController(currentStoryGroup: self.profile!)
         }
         /*let touchPoint = sender.location(in: self.window)
@@ -290,7 +293,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
 }
 
 extension DetailCollectionViewCell: UIGestureRecognizerDelegate {
-   func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+   /*func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         
         if otherGestureRecognizer is UISwipeGestureRecognizer {
             return true
@@ -300,7 +303,7 @@ extension DetailCollectionViewCell: UIGestureRecognizerDelegate {
         /*if (gestureRecognizer == mainScene.panRecognizer || gestureRecognizer == mainScene.pinchRecognizer) && otherGestureRecognizer == mainScene.tapRecognizer {
             return true
         }*/
-    }
+    }*/
     
     /*func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer is UITapGestureRecognizer {
