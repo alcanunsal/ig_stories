@@ -47,7 +47,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
     }
   
     @objc func cellTapped(sender: UITapGestureRecognizer) {
-        print("cellTapped:", profile)
+        print("progressbar--:", profile?.username)
         if sender.state == .ended {
             progressBar?.isHidden = false
             progressBar?.isPaused = false
@@ -156,7 +156,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
                 durations.append(10.0)
             }
         }
-        configureProgressBar(numSegments: profile!.stories.count, durations: durations, currentStory: currentStoryIndex)
+        configureProgressBar(numSegments: profile!.stories.count, durations: durations)
     }
     
     @IBAction func didTapCell(_ sender: UITapGestureRecognizer) {
@@ -187,8 +187,8 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
     }
     
     
-    func configureProgressBar(numSegments: Int, durations: [Double], currentStory: Int) {
-        print("configureProgressBar:", profile!.username, currentStory)
+    func configureProgressBar(numSegments: Int, durations: [Double]) {
+        print("configureProgressBar:", profile!.username, profile!.storiesSeenCount)
         self.progressBar = SegmentedProgressBar(numberOfSegments: numSegments, duration: durations[0])
         self.progressBar!.topColor = UIColor.white
         self.progressBar!.delegate = self
@@ -210,11 +210,11 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
                                                    constant: 0)
         progressContainerView.addConstraint(constraintTrailing)
         progressContainerView.addConstraint(constraintCenterX)
-        self.progressBar!.startAnimation(withDelay: 0.4)
-        if currentStory > 0 {
-            var currentIndex = currentStory
-            print("configureProgressBar CurrentStory>0:", currentStory)
-            if currentStory >= (profile!.stories.count) {
+        self.progressBar!.startAnimation(withDelay: 0.5)
+        if profile!.storiesSeenCount > 0 {
+            var currentIndex = profile!.storiesSeenCount
+            print("configureProgressBar CurrentStory>0:", profile!.storiesSeenCount)
+            if profile!.storiesSeenCount >= (profile!.stories.count) {
                 currentIndex = profile!.stories.count-1
             }
             print("configureProgressBar CurrentStory>0 2:", currentIndex)
@@ -222,7 +222,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
                 self.progressBar!.skip()
             }
         }
-        //self.progressBar!.isPaused = false
+        self.progressBar!.isPaused = false
     }
     
     override func prepareForReuse() {

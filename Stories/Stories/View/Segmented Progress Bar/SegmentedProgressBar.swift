@@ -36,6 +36,7 @@ class SegmentedProgressBar: UIView {
                     let pausedTime = layer.convertTime(CACurrentMediaTime(), from: nil)
                     layer.speed = 0.0
                     layer.timeOffset = pausedTime
+                    print("progressbar--ispaused")
                 }
             } else {
                 let segment = segments[currentAnimationIndex]
@@ -43,13 +44,15 @@ class SegmentedProgressBar: UIView {
                 let pausedTime = layer.timeOffset
                 layer.speed = 1.0
                 layer.timeOffset = 0.0
-                layer.beginTime = 0.0
+                layer.beginTime = 0.2
                 let timeSincePause = layer.convertTime(CACurrentMediaTime(), from: nil) - pausedTime
                 layer.beginTime = timeSincePause
+                print("progressbar--isnotpaused")
             }
         }
     }
     
+    private var fromSkip = false
     private var segments = [Segment]()
     private let duration: TimeInterval
     private var hasDoneLayout = false // hacky way to prevent layouting again
@@ -97,6 +100,7 @@ class SegmentedProgressBar: UIView {
     }
     
     private func animate(animationIndex: Int = 0, delay:Double) {
+        print("progressbar--animate:", animationIndex)
         let nextSegment = segments[animationIndex]
         currentAnimationIndex = animationIndex
         self.isPaused = false // no idea why we have to do this here, but it fixes everything :D
@@ -118,23 +122,30 @@ class SegmentedProgressBar: UIView {
     }
     
     private func next(delay:Double=0.0) {
+        print("progressbar--next")
         let newIndex = self.currentAnimationIndex + 1
         if newIndex < self.segments.count {
+            print("progressbar--new index")
             self.animate(animationIndex: newIndex, delay: delay)
             self.delegate?.segmentedProgressBarChangedIndex(index: newIndex)
         } else {
+            print("progressbar--here")
             self.delegate?.segmentedProgressBarFinished()
         }
     }
     
     func skip(delay:Double=0.0) {
+        print("progressbar--skip")
         let currentSegment = segments[currentAnimationIndex]
         currentSegment.topSegmentView.frame.size.width = currentSegment.bottomSegmentView.frame.width
         currentSegment.topSegmentView.layer.removeAllAnimations()
+        fromSkip = true
         self.next(delay: delay)
+        fromSkip = false
     }
     
     func rewind(delay:Double=0.0) {
+        print("progressbar--rewind")
         let currentSegment = segments[currentAnimationIndex]
         currentSegment.topSegmentView.layer.removeAllAnimations()
         currentSegment.topSegmentView.frame.size.width = 0

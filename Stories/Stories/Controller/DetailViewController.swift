@@ -19,6 +19,7 @@ class DetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+        print("progressbar--viewwillappear")
         self.needsDelayedScrolling = true
     }
     
@@ -33,13 +34,16 @@ class DetailViewController: UIViewController {
         view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handleDismiss)))
     }
     
-    /*override func viewWillLayoutSubviews() {
+    
+    override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.needsDelayedScrolling = true
-    }*/
+        //self.needsDelayedScrolling = true
+        print("progressbar--viewwilllayoutsubviews")
+    }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        print("progressbar--viewdidlayoutsubviews")
         if self.needsDelayedScrolling {
             self.needsDelayedScrolling = false
             detailCollectionView.scrollToItem(at: IndexPath(row: profileSelected!, section: 0), at: .right, animated: false)
@@ -118,11 +122,19 @@ extension DetailViewController: UICollectionViewDataSource, UICollectionViewDele
         print("cellforitemat:", cell.profile!.username, cell.profile!.storiesSeenCount)
         cell.configureCell()
         cell.delegate = self
-        if cell.profile?.username == "dwight_schrute" {
-            print("cellprofile:", cell.profile!)
-        }
         return cell
     }
+    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        print("progressbar--scrollviewfinishedanimating")
+        let currentIndexPath = detailCollectionView.indexPathsForVisibleItems[0]
+        if let cell = detailCollectionView.cellForItem(at: currentIndexPath) as? DetailCollectionViewCell {
+            //cell.progressBar!.startAnimation()
+            self.detailCollectionView.isUserInteractionEnabled = true
+            print("progressbar--scrollviewfinishedanimating2")
+        }
+    }
+    
     
     
     
@@ -152,7 +164,9 @@ extension DetailViewController: DetailCellDelegate {
             let prevCellIndexPath = IndexPath(row: currentIndexPath.row-1, section: currentIndexPath.section)
             let rect = self.detailCollectionView.layoutAttributesForItem(at: prevCellIndexPath)?.frame
             detailCollectionView.layoutIfNeeded()
+            self.detailCollectionView.isUserInteractionEnabled = false
             self.detailCollectionView.scrollRectToVisible(rect!, animated: true)
+            detailCollectionView.setNeedsLayout()
         }
     }
     
@@ -168,7 +182,10 @@ extension DetailViewController: DetailCellDelegate {
             let nextCellIndexPath = IndexPath(row: currentIndexPath.row+1, section: currentIndexPath.section)
             let rect = self.detailCollectionView.layoutAttributesForItem(at: nextCellIndexPath)?.frame
             detailCollectionView.layoutIfNeeded()
+            self.detailCollectionView.isUserInteractionEnabled = false
             self.detailCollectionView.scrollRectToVisible(rect!, animated: true)
+            detailCollectionView.setNeedsLayout()
+            
             //detailCollectionView.scrollToItem(at: nextCellIndexPath, at: .right, animated: true)
             //detailCollectionView.layoutIfNeeded()
         }
