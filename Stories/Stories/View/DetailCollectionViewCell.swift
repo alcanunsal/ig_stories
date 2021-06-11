@@ -9,7 +9,7 @@ import UIKit
 import Alamofire
 import AlamofireImage
 
-class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegate {
+class DetailCollectionViewCell: UICollectionViewCell {
     let identifier = "CubicCell"
     var profile:Profile?
     var delegate:DetailCellDelegate?
@@ -21,7 +21,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
     @IBOutlet weak var fsStoryImageView: UIImageView!
     @IBOutlet weak var gradientView: UIView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    
+    //var initialTouchPoint = CGPoint(x: 0, y: 0)
     private var storyChangedByTapping = false
     
     var progressBar: SegmentedProgressBar?
@@ -34,25 +34,29 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
                 //self.progressBar.alpha = 1.0
                 self.stackView.alpha = 1.0
             }, completion: nil)
+            //delegate!.userInteractionEnded()
         }
     }
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        //delegate?.userInteractionInProgress()
         progressBar!.isPaused = true
         self.progressBar!.isHidden = true
         UIView.animate(withDuration: 0.5, animations: {
             self.stackView.alpha = 0.0
         }, completion: nil)
     }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        //delegate?.userInteractionEnded()
+    }
   
     @objc func cellTapped(sender: UITapGestureRecognizer) {
-        print("progressbar--:", profile?.username)
+        print("progressbar--:", profile?.username ?? "")
         if sender.state == .ended {
             progressBar?.isHidden = false
             progressBar?.isPaused = false
-            //progressBar.isHidden = false
-            //stackView.isHidden = false
             UIView.animate(withDuration: 0.5, animations: {
                 //self.progressBar.alpha = 1.0
                 self.stackView.alpha = 1.0
@@ -83,6 +87,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
                     storyChangedByTapping = false
                 }
             }
+            //delegate!.userInteractionEnded()
         }
     }
     
@@ -109,14 +114,46 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
     override func awakeFromNib() {
         print("awakefromnib")
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped(sender:)))
+        tapGesture.delegate = self
         addGestureRecognizer(tapGesture)
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
-        longPressGesture.minimumPressDuration = 0.5
+        //longPressGesture.minimumPressDuration = 0.5
         longPressGesture.delaysTouchesBegan = false
         longPressGesture.delegate = self
         addGestureRecognizer(longPressGesture)
+        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleDismiss))
+        swipeGesture.direction = .down
+        swipeGesture.delegate = self
+        addGestureRecognizer(swipeGesture)
+        tapGesture.require(toFail: swipeGesture)
+        longPressGesture.require(toFail: swipeGesture)
+        //swipeGesture.require(toFail: tapGesture)
+        //swipeGesture.require(toFail: longPressGesture)
     }
     
+    @objc func handleDismiss(sender: UISwipeGestureRecognizer) {
+        if sender.direction == .down {
+            delegate?.dismissDetailViewController(currentStoryGroup: self.profile!)
+        }
+        /*let touchPoint = sender.location(in: self.window)
+        switch sender.state {
+            case .changed:
+                if touchPoint.y - initialTouchPoint.y > 0 {
+                    self.frame = CGRect(x: 0, y: max(0, touchPoint.y-initialTouchPoint.y), width: self.frame.size.width, height: self.frame.size.height)
+                }
+            case .ended:
+                if touchPoint.y - initialTouchPoint.y > 100 {
+                    delegate?.dismissDetailViewController(currentStoryGroup: self.profile!)
+                } else {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        self.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height)
+                    })
+                }
+                
+            default:
+                break
+            }*/
+    }
 
     
     override init(frame: CGRect) {
@@ -252,6 +289,28 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
     
 }
 
+extension DetailCollectionViewCell: UIGestureRecognizerDelegate {
+   func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        if otherGestureRecognizer is UISwipeGestureRecognizer {
+            return true
+        }
+        return false
+
+        /*if (gestureRecognizer == mainScene.panRecognizer || gestureRecognizer == mainScene.pinchRecognizer) && otherGestureRecognizer == mainScene.tapRecognizer {
+            return true
+        }*/
+    }
+    
+    /*func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer is UITapGestureRecognizer {
+            return true
+        }
+        return false
+    }*/
+
+}
+
 extension DetailCollectionViewCell: SegmentedProgressBarDelegate {
     func segmentedProgressBarChangedIndex(index: Int) {
         if !storyChangedByTapping {
@@ -277,4 +336,6 @@ protocol DetailCellDelegate {
     func goToPreviousStoryGroup(currentStoryGroup:Profile)
     func goToNextStoryGroup(currentStoryGroup:Profile)
     func dismissDetailViewController(currentStoryGroup:Profile)
+    func userInteractionInProgress()
+    func userInteractionEnded()
 }

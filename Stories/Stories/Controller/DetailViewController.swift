@@ -32,7 +32,7 @@ class DetailViewController: UIViewController {
         layout.animator = CubeAttributesAnimator()
         layout.scrollDirection = .horizontal
         detailCollectionView.collectionViewLayout = layout
-        view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handleDismiss)))
+       // view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handleDismiss)))
     }
     
     
@@ -66,11 +66,19 @@ class DetailViewController: UIViewController {
     
    
     
-    @objc func handleDismiss(sender: UIPanGestureRecognizer) {
+   /* @objc func handleDismiss(sender: UIPanGestureRecognizer) {
         let touchPoint = sender.location(in: self.view?.window)
+        if sender.state == .recognized {
+            initialTouchPoint = touchPoint
+            if let cellShown = detailCollectionView.visibleCells[0] as? DetailCollectionViewCell {
+                let grs = cellShown.gestureRecognizers?.count ?? 0
+                for i in 0..<grs {
+                    print("gesture recogniz3er")
+                    cellShown.gestureRecognizers![i].isEnabled = false
+                }
+            }
+        }
         switch sender.state {
-            case .began:
-                initialTouchPoint = touchPoint
             case .changed:
                 if touchPoint.y - initialTouchPoint.y > 0 {
                     self.view.frame = CGRect(x: 0, y: max(0, touchPoint.y-initialTouchPoint.y), width: self.view.frame.size.width, height: self.view.frame.size.height)
@@ -88,10 +96,17 @@ class DetailViewController: UIViewController {
                         self.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height)
                     })
                 }
+                if let cellShown = detailCollectionView.visibleCells[0] as? DetailCollectionViewCell {
+                    let grs = cellShown.gestureRecognizers?.count ?? 0
+                    for i in 0..<grs {
+                        print("gesture recogniz3er")
+                        cellShown.gestureRecognizers![i].isEnabled = true
+                    }
+                }
             default:
                 break
             }
-    }
+    }*/
     
     /*@objc func respondToSwipeGesture(gesture: UIGestureRecognizer) {
         if let swipeGesture = gesture as? UISwipeGestureRecognizer {
@@ -200,6 +215,20 @@ extension DetailViewController: DetailCellDelegate {
         }
         //detailCollectionView.reloadItems(at: [nextCellIndexPath])
         
+    }
+    
+    func userInteractionInProgress() {
+        let count = self.view.gestureRecognizers?.count ?? 0
+        for i in 0..<count {
+            self.view.gestureRecognizers![i].isEnabled = false
+        }
+    }
+    
+    func userInteractionEnded() {
+        let count = self.view.gestureRecognizers?.count ?? 0
+        for i in 0..<count {
+            self.view.gestureRecognizers![i].isEnabled = true
+        }
     }
     
     

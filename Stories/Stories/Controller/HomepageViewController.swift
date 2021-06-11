@@ -72,7 +72,6 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
 extension HomepageViewController: DetailViewControllerDelegate {
     func detailViewControllerWillDismiss(data: [Profile]) {
         self.profilesData = data
-        print(data)
         storiesCollectionView.reloadData()
     }
     
