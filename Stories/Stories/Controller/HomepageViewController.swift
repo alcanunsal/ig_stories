@@ -15,39 +15,40 @@ class HomepageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         storiesCollectionView.dataSource = self
         storiesCollectionView.delegate = self
         getStoriesData()
-        //storiesCollectionView.register(StoryCollectionViewCell.self, forCellWithReuseIdentifier: StoryCollectionViewCell.identifier)
     }
     
+    /// This function reads data from "story.json" and assigns it to self.profilesData
+    private func getStoriesData() {
+        let jsonData = JSONReader().readLocalJSONFile(forFile: "StoryData")
+        if let data = jsonData {
+            if let profs:Profiles = JSONReader().parseJSON(safeData: data) {
+                profilesData = profs.profiles
+            } else {
+                print("error: JSON file contents and codable object format not matching")
+            }
+        } else {
+            print("error: JSONReader could not read the json file")
+        }
+    }
+    
+    // MARK: Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-
         if let destination = segue.destination as? DetailViewController {
             if let index = storiesCollectionView.indexPathsForSelectedItems?.first?.row {
                 destination.profiles = profilesData!
                 destination.profileSelected = index
                 destination.delegate = self
             } else {
-                print("segue problem")
+                print("error: no cells chosen for segue")
             }
+        } else {
+            print("error: destination view controller for segue unknown")
         }
     }
     
-    func getStoriesData() {
-        let jsonData = JSONReader().readLocalJSONFile(forFile: "StoryData")
-        if let data = jsonData {
-            if let obj:Profiles = JSONReader().parseJSON(safeData: data) {
-                profilesData = obj.profiles
-            } else {
-                print("parse error json")
-            }
-        } else {
-            print("jsonerr")
-        }
-    }
-
 }
 
 extension HomepageViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -68,12 +69,9 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
     }
 }
 
-
 extension HomepageViewController: DetailViewControllerDelegate {
     func detailViewControllerWillDismiss(data: [Profile]) {
         self.profilesData = data
         storiesCollectionView.reloadData()
     }
-    
-    
 }

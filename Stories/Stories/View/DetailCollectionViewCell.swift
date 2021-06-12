@@ -11,7 +11,7 @@ import AlamofireImage
 
 class DetailCollectionViewCell: UICollectionViewCell {
     let identifier = "CubicCell"
-    var profile:Profile?
+    private var profile:Profile?
     var delegate:DetailCellDelegate?
     @IBOutlet weak var timestampLabel: UILabel!
     @IBOutlet weak var userNameLabel: UILabel!
@@ -21,7 +21,6 @@ class DetailCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var fsStoryImageView: UIImageView!
     @IBOutlet weak var gradientView: UIView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    //var initialTouchPoint = CGPoint(x: 0, y: 0)
     private var storyChangedByTapping = false
     
     var progressBar: SegmentedProgressBar?
@@ -42,6 +41,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         //delegate?.userInteractionInProgress()
+        print("touchesBegan")
         progressBar!.isPaused = true
         self.progressBar!.isHidden = true
         UIView.animate(withDuration: 0.5, animations: {
@@ -89,6 +89,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
                     //profile?.storiesSeenCount+=1
                     storyChangedByTapping = true
                     progressBar?.isPaused = true
+                    print("tapgesture stopped")
                     delegate?.goToNextStoryGroup(currentStoryGroup: profile!)
                     storyChangedByTapping = false
                 }
@@ -104,8 +105,9 @@ class DetailCollectionViewCell: UICollectionViewCell {
             timestampLabel.text = profile!.stories[profile!.storiesSeenCount].timestamp
             gradientView.addGradientBackground(firstColor: getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? getRandomColor())
         }
-        progressBar?.isPaused = false
+        //progressBar?.isPaused = false
         progressBar!.skip()
+        progressBar?.isPaused = true
     }
     
     func goToPrevStory() {
@@ -114,7 +116,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
         timestampLabel.text = profile!.stories[profile!.storiesSeenCount].timestamp
         gradientView.addGradientBackground(firstColor: getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? getRandomColor())
         progressBar!.rewind()
-        progressBar!.isPaused = false
+        progressBar!.isPaused = true
     }
     
     override func awakeFromNib() {
@@ -145,24 +147,6 @@ class DetailCollectionViewCell: UICollectionViewCell {
             }
             delegate?.dismissDetailViewController(currentStoryGroup: self.profile!)
         }
-        /*let touchPoint = sender.location(in: self.window)
-        switch sender.state {
-            case .changed:
-                if touchPoint.y - initialTouchPoint.y > 0 {
-                    self.frame = CGRect(x: 0, y: max(0, touchPoint.y-initialTouchPoint.y), width: self.frame.size.width, height: self.frame.size.height)
-                }
-            case .ended:
-                if touchPoint.y - initialTouchPoint.y > 100 {
-                    delegate?.dismissDetailViewController(currentStoryGroup: self.profile!)
-                } else {
-                    UIView.animate(withDuration: 0.5, animations: {
-                        self.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height)
-                    })
-                }
-                
-            default:
-                break
-            }*/
     }
 
     
@@ -175,27 +159,30 @@ class DetailCollectionViewCell: UICollectionViewCell {
     }
     
     override func layoutSubviews() {
+        print("layputsubviews")
         super.layoutSubviews()
-        //configureProgressBar()
         ppImageView.layer.cornerRadius = ppImageView.frame.size.width/2
         ppImageView.clipsToBounds = true
         ppImageView.layer.masksToBounds = true
         stackView.alpha = 1.0
-        print("layoutsubviews")
+        activityIndicator.isHidden = true
         if let _ = self.progressBar {
             if progressBar!.isPaused {
                 progressBar?.alpha = 1.0
-                progressBar?.isPaused = false
+                //progressBar?.isPaused = false
                 progressBar?.isHidden = false
             }
         }
         
     }
     
-    func configureCell() {
-        print("configureCell:", profile!.username, profile!.storiesSeenCount)
-        userNameLabel.text = profile!.username
-        gradientView.frame.size = fsStoryImageView.frame.size
+    func setProfile(profile:Profile) {
+        self.profile = profile
+    }
+    
+    func configureCell(withProfile prof:Profile) {
+        self.userNameLabel.text = self.profile!.username
+        self.gradientView.frame.size = self.fsStoryImageView.frame.size
         setImage(imageView: ppImageView, strURL: profile!.profilePicUrl, isPp: true)
         var currentStoryIndex = profile!.stories.count-1
         if profile!.storiesSeenCount < profile!.stories.count-1 {
@@ -205,6 +192,12 @@ class DetailCollectionViewCell: UICollectionViewCell {
         setImage(imageView: fsStoryImageView, strURL: profile!.stories[currentStoryIndex].contentUrl)
         timestampLabel.text = profile!.stories[currentStoryIndex].timestamp
         gradientView.addGradientBackground(firstColor: getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? getRandomColor())
+    }
+    
+    func configureProgressBar() {
+        if self.progressBar != nil {
+            return
+        }
         var durations:[Double] = []
         for story in profile!.stories {
             if story.contentType == 0 {
@@ -214,43 +207,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
                 durations.append(10.0)
             }
         }
-        configureProgressBar(numSegments: profile!.stories.count, durations: durations)
-    }
-    
-    func setImage(imageView: UIImageView, strURL: String, isPp: Bool = false) {
-        if !isPp {
-            activityIndicator.startAnimating()
-            activityIndicator.isHidden = false
-        }
-        fsStoryImageView.contentMode = .scaleToFill
-        if let url = URL(string:strURL) {
-            imageView.af.setImage(withURL: url ,
-                                  placeholderImage: UIImage(named: "gray"),
-                                  filter: nil,
-                                  imageTransition: .crossDissolve(0.2),
-                                  completion: { response in
-                                        if !isPp {
-                                            DispatchQueue.main.async {
-                                                self.activityIndicator.stopAnimating()
-                                                self.activityIndicator.isHidden = true
-                                                self.fsStoryImageView.contentMode = .scaleAspectFit
-                                            }
-                                        }
-            })
-            
-        } else {
-            imageView.image = UIImage(named: "gray")
-        }
-    }
-    
-    
-    func configureProgressBar(numSegments: Int, durations: [Double]) {
-        if self.progressBar != nil {
-            print("progressbar already in view")
-            return
-        }
-        print("configureProgressBar:", profile!.username, profile!.storiesSeenCount)
-        self.progressBar = SegmentedProgressBar(numberOfSegments: numSegments, duration: durations[0])
+        self.progressBar = SegmentedProgressBar(numberOfSegments: self.profile!.stories.count, duration: durations[0])
         self.progressBar!.topColor = UIColor.white
         self.progressBar!.delegate = self
         progressContainerView.addSubview(self.progressBar!)
@@ -274,17 +231,60 @@ class DetailCollectionViewCell: UICollectionViewCell {
         self.progressBar!.startAnimation(withDelay: 0.5)
         if profile!.storiesSeenCount > 0 {
             var currentIndex = profile!.storiesSeenCount
-            print("configureProgressBar CurrentStory>0:", profile!.storiesSeenCount)
             if profile!.storiesSeenCount >= (profile!.stories.count) {
                 currentIndex = profile!.stories.count-1
             }
-            print("configureProgressBar CurrentStory>0 2:", currentIndex)
             for _ in 1...currentIndex {
                 self.progressBar!.skip()
             }
         }
-        self.progressBar!.isPaused = false
+        print("here-1")
+        self.progressBar!.isPaused = true
     }
+    
+    func setImage(imageView: UIImageView, strURL: String, isPp: Bool = false) {
+        if !isPp {
+            print("here0: ", self.progressBar?.isPaused)
+            if !self.progressBar!.isPaused {
+                self.progressBar!.isPaused = true
+            }
+            //activityIndicator.startAnimating()
+            //activityIndicator.isHidden = false
+        }
+        //fsStoryImageView.contentMode = .scaleToFill
+        if let url = URL(string:strURL) {
+            imageView.af.setImage(withURL: url ,
+                                  placeholderImage: nil,
+                                  filter: nil,
+                                  imageTransition: .crossDissolve(0.1),
+                                  completion: { response in
+                                    switch response.result {
+                                    case .success(_):
+                                        if !isPp {
+                                            DispatchQueue.main.async {
+                                                //self.activityIndicator.stopAnimating()
+                                                //self.activityIndicator.isHidden = true
+                                                //self.fsStoryImageView.contentMode = .scaleAspectFit
+                                                print("here: is paused:", self.progressBar?.isPaused)
+                                                if self.progressBar!.isPaused {
+                                                    print("here2")
+                                                    self.progressBar!.isPaused = false
+                                                    self.setNeedsLayout()
+                                                    self.setNeedsDisplay()
+                                                }
+                                            }
+                                        }
+                                    case .failure(let err):
+                                        print(err)
+                                    }
+            })
+            
+        } else {
+            imageView.image = UIImage(named: "gray")
+        }
+    }
+    
+    
     
     override func prepareForReuse() {
         super.prepareForReuse()

@@ -206,6 +206,7 @@
                                                     </constraints>
                                                 </view>
                                             </subviews>
+                                            <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
                                                 <constraint firstItem="yl1-x0-FV4" firstAttribute="leading" secondItem="iJf-MZ-mpr" secondAttribute="leading" constant="10" id="1iU-Uc-HV0"/>
                                                 <constraint firstItem="0aN-da-bX8" firstAttribute="trailing" secondItem="nCX-5H-ZDj" secondAttribute="trailing" id="2p7-Jc-sKC"/>
@@ -262,11 +263,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LWc-bC-qb2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <tapGestureRecognizer id="cHE-dz-SKZ">
-                    <connections>
-                        <action selector="didTapView:" destination="TMl-88-Mip" id="aHW-y2-18L"/>
-                    </connections>
-                </tapGestureRecognizer>
+                <tapGestureRecognizer id="cHE-dz-SKZ"/>
             </objects>
             <point key="canvasLocation" x="50.724637681159422" y="72.991071428571431"/>
         </scene>
