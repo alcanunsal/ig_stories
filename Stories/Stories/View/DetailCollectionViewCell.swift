@@ -28,6 +28,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
     
     @objc func longPressed(sender: UILongPressGestureRecognizer) {
         if sender.state == .ended {
+            print("userInteractionInProgress longtap ended")
             progressBar!.isPaused = false
             self.progressBar!.isHidden = false
             UIView.animate(withDuration: 0.5, animations: {
@@ -50,10 +51,15 @@ class DetailCollectionViewCell: UICollectionViewCell {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         //delegate?.userInteractionEnded()
+        self.stackView.alpha = 1.0
+        print("touches ended")
+        self.progressBar?.isHidden = false
+        self.progressBar?.isPaused = false
     }
   
     @objc func cellTapped(sender: UITapGestureRecognizer) {
         print("progressbar--:", profile?.username ?? "")
+        print("uitapgesturerecognizer state ", sender.state.rawValue)
         if sender.state == .ended {
             progressBar?.isHidden = false
             progressBar?.isPaused = false
@@ -126,9 +132,10 @@ class DetailCollectionViewCell: UICollectionViewCell {
         swipeGesture.delegate = self
         addGestureRecognizer(swipeGesture)
         tapGesture.require(toFail: swipeGesture)
-        longPressGesture.require(toFail: swipeGesture)
+        tapGesture.require(toFail: longPressGesture)
+        //longPressGesture.require(toFail: swipeGesture)
         //swipeGesture.require(toFail: tapGesture)
-        //swipeGesture.require(toFail: longPressGesture)
+        swipeGesture.require(toFail: longPressGesture)
     }
     
     @objc func handleDismiss(sender: UISwipeGestureRecognizer) {
@@ -174,6 +181,15 @@ class DetailCollectionViewCell: UICollectionViewCell {
         ppImageView.clipsToBounds = true
         ppImageView.layer.masksToBounds = true
         stackView.alpha = 1.0
+        print("layoutsubviews")
+        if let _ = self.progressBar {
+            if progressBar!.isPaused {
+                progressBar?.alpha = 1.0
+                progressBar?.isPaused = false
+                progressBar?.isHidden = false
+            }
+        }
+        
     }
     
     func configureCell() {
@@ -225,6 +241,10 @@ class DetailCollectionViewCell: UICollectionViewCell {
     
     
     func configureProgressBar(numSegments: Int, durations: [Double]) {
+        if self.progressBar != nil {
+            print("progressbar already in view")
+            return
+        }
         print("configureProgressBar:", profile!.username, profile!.storiesSeenCount)
         self.progressBar = SegmentedProgressBar(numberOfSegments: numSegments, duration: durations[0])
         self.progressBar!.topColor = UIColor.white
@@ -273,7 +293,9 @@ class DetailCollectionViewCell: UICollectionViewCell {
         progressBar?.removeFromSuperview()
         progressBar = nil
         fsStoryImageView.af.cancelImageRequest()
+        print("prepareforreuse")
     }
+    
     
     @IBAction func closeButtonTapped(_ sender: Any) {
         if profile!.storiesSeenCount < profile!.stories.count-1 {

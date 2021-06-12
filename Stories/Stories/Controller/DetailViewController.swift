@@ -152,6 +152,7 @@ extension DetailViewController: UICollectionViewDataSource, UICollectionViewDele
         if let cell = detailCollectionView.cellForItem(at: currentIndexPath) as? DetailCollectionViewCell {
             //cell.progressBar!.startAnimation()
             self.detailCollectionView.isUserInteractionEnabled = true
+            cell.configureProgressBar(numSegments: cell.profile!.stories.count, durations: [5])
             print("progressbar--scrollviewfinishedanimating2")
         }
     }
@@ -218,13 +219,19 @@ extension DetailViewController: DetailCellDelegate {
     }
     
     func userInteractionInProgress() {
+        print("in userInteractionInProgress")
+        self.detailCollectionView.isUserInteractionEnabled = false
+        self.detailCollectionView.isScrollEnabled = false
         let count = self.view.gestureRecognizers?.count ?? 0
         for i in 0..<count {
+            print("in userInteractionInProgress", i)
             self.view.gestureRecognizers![i].isEnabled = false
         }
     }
     
     func userInteractionEnded() {
+        self.detailCollectionView.isScrollEnabled = false
+        self.detailCollectionView.isUserInteractionEnabled = true
         let count = self.view.gestureRecognizers?.count ?? 0
         for i in 0..<count {
             self.view.gestureRecognizers![i].isEnabled = true
