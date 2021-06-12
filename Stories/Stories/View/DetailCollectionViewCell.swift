@@ -20,7 +20,14 @@ class DetailCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var progressContainerView: UIView!
     @IBOutlet weak var fsStoryImageView: UIImageView!
     @IBOutlet weak var gradientView: UIView!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    lazy var activityIndicator: UIActivityIndicatorView! = {
+        var activityInd = UIActivityIndicatorView(frame: self.gradientView.frame)
+        activityInd.color = UIColor.white
+        activityInd.center = CGPoint(x: self.frame.width/2, y: self.frame.height/2)
+        self.addSubview(activityInd)
+        self.bringSubviewToFront(activityInd)
+        return activityInd
+    } ()
     private var storyChangedByTapping = false
     
     var progressBar: SegmentedProgressBar?
@@ -89,7 +96,6 @@ class DetailCollectionViewCell: UICollectionViewCell {
                     //profile?.storiesSeenCount+=1
                     storyChangedByTapping = true
                     progressBar?.isPaused = true
-                    print("tapgesture stopped")
                     delegate?.goToNextStoryGroup(currentStoryGroup: profile!)
                     storyChangedByTapping = false
                 }
@@ -100,7 +106,8 @@ class DetailCollectionViewCell: UICollectionViewCell {
     
     func goToNextStory(){
         if profile!.storiesSeenCount < profile!.stories.count {
-            setImage(imageView: ppImageView, strURL: profile!.profilePicUrl, isPp: true)
+            fsStoryImageView.image = nil
+            //setImage(imageView: ppImageView, strURL: profile!.profilePicUrl, isPp: true)
             setImage(imageView: fsStoryImageView, strURL: profile!.stories[profile!.storiesSeenCount].contentUrl)
             timestampLabel.text = profile!.stories[profile!.storiesSeenCount].timestamp
             gradientView.addGradientBackground(firstColor: getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? getRandomColor())
@@ -111,7 +118,8 @@ class DetailCollectionViewCell: UICollectionViewCell {
     }
     
     func goToPrevStory() {
-        setImage(imageView: ppImageView, strURL: profile!.profilePicUrl, isPp: true)
+        fsStoryImageView.image = nil
+        //setImage(imageView: ppImageView, strURL: profile!.profilePicUrl, isPp: true)
         setImage(imageView: fsStoryImageView, strURL: profile!.stories[profile!.storiesSeenCount].contentUrl)
         timestampLabel.text = profile!.stories[profile!.storiesSeenCount].timestamp
         gradientView.addGradientBackground(firstColor: getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? getRandomColor())
@@ -165,7 +173,6 @@ class DetailCollectionViewCell: UICollectionViewCell {
         ppImageView.clipsToBounds = true
         ppImageView.layer.masksToBounds = true
         stackView.alpha = 1.0
-        activityIndicator.isHidden = true
         if let _ = self.progressBar {
             if progressBar!.isPaused {
                 progressBar?.alpha = 1.0
@@ -192,6 +199,8 @@ class DetailCollectionViewCell: UICollectionViewCell {
         setImage(imageView: fsStoryImageView, strURL: profile!.stories[currentStoryIndex].contentUrl)
         timestampLabel.text = profile!.stories[currentStoryIndex].timestamp
         gradientView.addGradientBackground(firstColor: getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? getRandomColor())
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
     }
     
     func configureProgressBar() {
@@ -209,6 +218,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
         }
         self.progressBar = SegmentedProgressBar(numberOfSegments: self.profile!.stories.count, duration: durations[0])
         self.progressBar!.topColor = UIColor.white
+        self.progressBar?.bottomColor = UIColor.white.withAlphaComponent(0.6)
         self.progressBar!.delegate = self
         progressContainerView.addSubview(self.progressBar!)
         self.progressBar!.frame = CGRect(origin: progressContainerView.bounds.origin, size: CGSize(width: self.bounds.width-25, height: 3))
@@ -229,13 +239,16 @@ class DetailCollectionViewCell: UICollectionViewCell {
         progressContainerView.addConstraint(constraintTrailing)
         progressContainerView.addConstraint(constraintCenterX)
         self.progressBar!.startAnimation(withDelay: 0.5)
+        print("storiesSeenCount",profile?.storiesSeenCount)
         if profile!.storiesSeenCount > 0 {
             var currentIndex = profile!.storiesSeenCount
             if profile!.storiesSeenCount >= (profile!.stories.count) {
                 currentIndex = profile!.stories.count-1
             }
-            for _ in 1...currentIndex {
-                self.progressBar!.skip()
+            if currentIndex > 0 {
+                for _ in 1...currentIndex {
+                    self.progressBar!.skip()
+                }
             }
         }
         print("here-1")
@@ -248,10 +261,9 @@ class DetailCollectionViewCell: UICollectionViewCell {
             if !self.progressBar!.isPaused {
                 self.progressBar!.isPaused = true
             }
-            //activityIndicator.startAnimating()
-            //activityIndicator.isHidden = false
+            activityIndicator.isHidden = false
+            activityIndicator.startAnimating()
         }
-        //fsStoryImageView.contentMode = .scaleToFill
         if let url = URL(string:strURL) {
             imageView.af.setImage(withURL: url ,
                                   placeholderImage: nil,
@@ -262,9 +274,8 @@ class DetailCollectionViewCell: UICollectionViewCell {
                                     case .success(_):
                                         if !isPp {
                                             DispatchQueue.main.async {
-                                                //self.activityIndicator.stopAnimating()
-                                                //self.activityIndicator.isHidden = true
-                                                //self.fsStoryImageView.contentMode = .scaleAspectFit
+                                                self.activityIndicator.stopAnimating()
+                                                self.activityIndicator.isHidden = true
                                                 print("here: is paused:", self.progressBar?.isPaused)
                                                 if self.progressBar!.isPaused {
                                                     print("here2")
@@ -289,10 +300,10 @@ class DetailCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         progressBar?.isPaused = true
-        //timestampLabel.text = ""
-        //userNameLabel.text = ""
-        //ppImageView.image = nil
-        //fsStoryImageView.image = nil
+        timestampLabel.text = ""
+        userNameLabel.text = ""
+        ppImageView.image = nil
+        fsStoryImageView.image = nil
         ppImageView.af.cancelImageRequest()
         progressBar?.removeFromSuperview()
         progressBar = nil
@@ -347,6 +358,7 @@ extension DetailCollectionViewCell: SegmentedProgressBarDelegate {
             if profile!.storiesSeenCount < profile!.stories.count-1 {
                 profile?.storiesSeenCount += 1
             }
+            fsStoryImageView.image = nil
             setImage(imageView: fsStoryImageView, strURL: profile!.stories[index].contentUrl)
             timestampLabel.text = profile!.stories[index].timestamp
             gradientView.addGradientBackground(firstColor: getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? getRandomColor())
