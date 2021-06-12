@@ -195,6 +195,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
     func configureCell() {
         print("configureCell:", profile!.username, profile!.storiesSeenCount)
         userNameLabel.text = profile!.username
+        gradientView.frame.size = fsStoryImageView.frame.size
         setImage(imageView: ppImageView, strURL: profile!.profilePicUrl, isPp: true)
         var currentStoryIndex = profile!.stories.count-1
         if profile!.storiesSeenCount < profile!.stories.count-1 {
@@ -221,6 +222,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
             activityIndicator.startAnimating()
             activityIndicator.isHidden = false
         }
+        fsStoryImageView.contentMode = .scaleToFill
         if let url = URL(string:strURL) {
             imageView.af.setImage(withURL: url ,
                                   placeholderImage: UIImage(named: "gray"),
@@ -231,9 +233,11 @@ class DetailCollectionViewCell: UICollectionViewCell {
                                             DispatchQueue.main.async {
                                                 self.activityIndicator.stopAnimating()
                                                 self.activityIndicator.isHidden = true
+                                                self.fsStoryImageView.contentMode = .scaleAspectFit
                                             }
                                         }
             })
+            
         } else {
             imageView.image = UIImage(named: "gray")
         }
