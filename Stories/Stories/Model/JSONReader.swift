@@ -14,7 +14,7 @@ struct JSONReader: Codable {
         do {
             return try decoder.decode(T.self, from: safeData)
         } catch let err{
-           print("errhere:",err)
+           print("JSON parsing error:",err)
         }
         return nil
     }
@@ -26,7 +26,7 @@ struct JSONReader: Codable {
                 return data
             }
         } catch {
-            print("errorjson: \(error)")
+            print("JSON reading error: \(error)")
         }
         return nil
     }

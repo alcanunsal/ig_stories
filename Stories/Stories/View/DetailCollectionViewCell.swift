@@ -173,6 +173,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
         ppImageView.layer.cornerRadius = ppImageView.frame.size.width/2
         ppImageView.clipsToBounds = true
         ppImageView.layer.masksToBounds = true
+        stackView.alpha = 1.0
     }
     
     func configureCell() {
