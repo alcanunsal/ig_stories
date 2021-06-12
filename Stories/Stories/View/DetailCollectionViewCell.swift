@@ -9,10 +9,9 @@ import UIKit
 import Alamofire
 import AlamofireImage
 
-class DetailCollectionViewCell: UICollectionViewCell {
+class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     let identifier = "CubicCell"
-    private var profile:Profile?
-    var delegate:DetailCellDelegate?
+    
     @IBOutlet weak var timestampLabel: UILabel!
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var ppImageView: UIImageView!
@@ -20,6 +19,12 @@ class DetailCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var progressContainerView: UIView!
     @IBOutlet weak var fsStoryImageView: UIImageView!
     @IBOutlet weak var gradientView: UIView!
+    
+    private var profile:Profile?
+    var delegate:DetailCellDelegate?
+    private var storyChangedByTapping = false
+    
+    var progressBar: SegmentedProgressBar?
     lazy var activityIndicator: UIActivityIndicatorView! = {
         var activityInd = UIActivityIndicatorView(frame: self.gradientView.frame)
         activityInd.color = UIColor.white
@@ -28,135 +33,6 @@ class DetailCollectionViewCell: UICollectionViewCell {
         self.bringSubviewToFront(activityInd)
         return activityInd
     } ()
-    private var storyChangedByTapping = false
-    
-    var progressBar: SegmentedProgressBar?
-    
-    @objc func longPressed(sender: UILongPressGestureRecognizer) {
-        if sender.state == .ended {
-            print("userInteractionInProgress longtap ended")
-            progressBar!.isPaused = false
-            self.progressBar!.isHidden = false
-            UIView.animate(withDuration: 0.5, animations: {
-                //self.progressBar.alpha = 1.0
-                self.stackView.alpha = 1.0
-            }, completion: nil)
-            //delegate!.userInteractionEnded()
-        }
-    }
-    
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //delegate?.userInteractionInProgress()
-        print("touchesBegan")
-        progressBar!.isPaused = true
-        self.progressBar!.isHidden = true
-        UIView.animate(withDuration: 0.5, animations: {
-            self.stackView.alpha = 0.0
-        }, completion: nil)
-    }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //delegate?.userInteractionEnded()
-        self.stackView.alpha = 1.0
-        print("touches ended")
-        self.progressBar?.isHidden = false
-        self.progressBar?.isPaused = false
-    }
-  
-    @objc func cellTapped(sender: UITapGestureRecognizer) {
-        print("progressbar--:", profile?.username ?? "")
-        print("uitapgesturerecognizer state ", sender.state.rawValue)
-        if sender.state == .ended {
-            progressBar?.isHidden = false
-            progressBar?.isPaused = false
-            UIView.animate(withDuration: 0.5, animations: {
-                //self.progressBar.alpha = 1.0
-                self.stackView.alpha = 1.0
-            }, completion: nil)
-            let touchPoint = sender.location(in: self)
-            if touchPoint.x < self.bounds.size.width/3 {
-                if profile!.storiesSeenCount > 0 {
-                    profile!.storiesSeenCount -= 1
-                    storyChangedByTapping = true
-                    goToPrevStory()
-                    storyChangedByTapping = false
-                } else {
-                    storyChangedByTapping = true
-                    delegate?.goToPreviousStoryGroup(currentStoryGroup: profile!)
-                    storyChangedByTapping = false
-                }
-            } else {
-                if profile!.storiesSeenCount <= profile!.stories.count-1 {
-                    profile!.storiesSeenCount += 1
-                    storyChangedByTapping = true
-                    goToNextStory()
-                    storyChangedByTapping = false
-                } else {
-                    //profile?.storiesSeenCount+=1
-                    storyChangedByTapping = true
-                    progressBar?.isPaused = true
-                    delegate?.goToNextStoryGroup(currentStoryGroup: profile!)
-                    storyChangedByTapping = false
-                }
-            }
-            //delegate!.userInteractionEnded()
-        }
-    }
-    
-    func goToNextStory(){
-        if profile!.storiesSeenCount < profile!.stories.count {
-            fsStoryImageView.image = nil
-            //setImage(imageView: ppImageView, strURL: profile!.profilePicUrl, isPp: true)
-            setImage(imageView: fsStoryImageView, strURL: profile!.stories[profile!.storiesSeenCount].contentUrl)
-            timestampLabel.text = profile!.stories[profile!.storiesSeenCount].timestamp
-            gradientView.addGradientBackground(firstColor: getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? getRandomColor())
-        }
-        //progressBar?.isPaused = false
-        progressBar!.skip()
-        progressBar?.isPaused = true
-    }
-    
-    func goToPrevStory() {
-        fsStoryImageView.image = nil
-        //setImage(imageView: ppImageView, strURL: profile!.profilePicUrl, isPp: true)
-        setImage(imageView: fsStoryImageView, strURL: profile!.stories[profile!.storiesSeenCount].contentUrl)
-        timestampLabel.text = profile!.stories[profile!.storiesSeenCount].timestamp
-        gradientView.addGradientBackground(firstColor: getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? getRandomColor())
-        progressBar!.rewind()
-        progressBar!.isPaused = true
-    }
-    
-    override func awakeFromNib() {
-        print("awakefromnib")
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped(sender:)))
-        tapGesture.delegate = self
-        addGestureRecognizer(tapGesture)
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
-        longPressGesture.minimumPressDuration = 0.5
-        longPressGesture.delaysTouchesBegan = false
-        longPressGesture.delegate = self
-        addGestureRecognizer(longPressGesture)
-        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleDismiss))
-        swipeGesture.direction = .down
-        swipeGesture.delegate = self
-        addGestureRecognizer(swipeGesture)
-        tapGesture.require(toFail: swipeGesture)
-        tapGesture.require(toFail: longPressGesture)
-        //longPressGesture.require(toFail: swipeGesture)
-        //swipeGesture.require(toFail: tapGesture)
-        swipeGesture.require(toFail: longPressGesture)
-    }
-    
-    @objc func handleDismiss(sender: UISwipeGestureRecognizer) {
-        if sender.direction == .down {
-            if profile!.storiesSeenCount < profile!.stories.count-1 {
-                profile?.storiesSeenCount += 1
-            }
-            delegate?.dismissDetailViewController(currentStoryGroup: self.profile!)
-        }
-    }
-
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -166,8 +42,45 @@ class DetailCollectionViewCell: UICollectionViewCell {
         super.init(coder: coder)
     }
     
+    override func awakeFromNib() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped(sender:)))
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
+        let swipeDownGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleDismiss))
+        let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleHorizontalSwipe))
+        let swipeRightGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleHorizontalSwipe))
+        
+        tapGesture.delegate = self
+        addGestureRecognizer(tapGesture)
+        
+        longPressGesture.minimumPressDuration = 0.5
+        longPressGesture.delegate = self
+        addGestureRecognizer(longPressGesture)
+        
+        swipeDownGesture.direction = .down
+        swipeDownGesture.delegate = self
+        addGestureRecognizer(swipeDownGesture)
+        
+        swipeLeftGesture.direction = .left
+        swipeLeftGesture.delegate = self
+        addGestureRecognizer(swipeLeftGesture)
+        
+        swipeRightGesture.direction = .right
+        swipeRightGesture.delegate = self
+        addGestureRecognizer(swipeRightGesture)
+        
+        tapGesture.require(toFail: swipeDownGesture)
+        tapGesture.require(toFail: longPressGesture)
+        swipeDownGesture.require(toFail: longPressGesture)
+        swipeLeftGesture.require(toFail: longPressGesture)
+        swipeRightGesture.require(toFail: longPressGesture)
+        
+    }
+    
+    func setProfile(profile:Profile) {
+        self.profile = profile
+    }
+    
     override func layoutSubviews() {
-        print("layputsubviews")
         super.layoutSubviews()
         ppImageView.layer.cornerRadius = ppImageView.frame.size.width/2
         ppImageView.clipsToBounds = true
@@ -176,15 +89,25 @@ class DetailCollectionViewCell: UICollectionViewCell {
         if let _ = self.progressBar {
             if progressBar!.isPaused {
                 progressBar?.alpha = 1.0
-                //progressBar?.isPaused = false
                 progressBar?.isHidden = false
+                if fsStoryImageView.image != nil {
+                    progressBar?.isPaused = false
+                }
             }
         }
-        
     }
     
-    func setProfile(profile:Profile) {
-        self.profile = profile
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        progressBar?.isPaused = true
+        timestampLabel.text = ""
+        userNameLabel.text = ""
+        ppImageView.image = nil
+        fsStoryImageView.image = nil
+        ppImageView.af.cancelImageRequest()
+        progressBar?.removeFromSuperview()
+        progressBar = nil
+        fsStoryImageView.af.cancelImageRequest()
     }
     
     func configureCell(withProfile prof:Profile) {
@@ -198,7 +121,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
         profile?.storiesSeenCount = currentStoryIndex
         setImage(imageView: fsStoryImageView, strURL: profile!.stories[currentStoryIndex].contentUrl)
         timestampLabel.text = profile!.stories[currentStoryIndex].timestamp
-        gradientView.addGradientBackground(firstColor: getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? getRandomColor())
+        gradientView.addGradientBackground(firstColor: UIColor.getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? UIColor.getRandomColor())
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
     }
@@ -239,7 +162,6 @@ class DetailCollectionViewCell: UICollectionViewCell {
         progressContainerView.addConstraint(constraintTrailing)
         progressContainerView.addConstraint(constraintCenterX)
         self.progressBar!.startAnimation(withDelay: 0.5)
-        print("storiesSeenCount",profile?.storiesSeenCount)
         if profile!.storiesSeenCount > 0 {
             var currentIndex = profile!.storiesSeenCount
             if profile!.storiesSeenCount >= (profile!.stories.count) {
@@ -251,13 +173,11 @@ class DetailCollectionViewCell: UICollectionViewCell {
                 }
             }
         }
-        print("here-1")
         self.progressBar!.isPaused = true
     }
     
     func setImage(imageView: UIImageView, strURL: String, isPp: Bool = false) {
         if !isPp {
-            print("here0: ", self.progressBar?.isPaused)
             if !self.progressBar!.isPaused {
                 self.progressBar!.isPaused = true
             }
@@ -276,9 +196,7 @@ class DetailCollectionViewCell: UICollectionViewCell {
                                             DispatchQueue.main.async {
                                                 self.activityIndicator.stopAnimating()
                                                 self.activityIndicator.isHidden = true
-                                                print("here: is paused:", self.progressBar?.isPaused)
                                                 if self.progressBar!.isPaused {
-                                                    print("here2")
                                                     self.progressBar!.isPaused = false
                                                     self.setNeedsLayout()
                                                     self.setNeedsDisplay()
@@ -295,22 +213,31 @@ class DetailCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
+    func goToNextStory(){
+        if profile!.storiesSeenCount < profile!.stories.count {
+            fsStoryImageView.image = nil
+            setImage(imageView: fsStoryImageView, strURL: profile!.stories[profile!.storiesSeenCount].contentUrl)
+            timestampLabel.text = profile!.stories[profile!.storiesSeenCount].timestamp
+            gradientView.addGradientBackground(firstColor: UIColor.getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? UIColor.getRandomColor())
+        }
+        progressBar!.skip()
         progressBar?.isPaused = true
-        timestampLabel.text = ""
-        userNameLabel.text = ""
-        ppImageView.image = nil
-        fsStoryImageView.image = nil
-        ppImageView.af.cancelImageRequest()
-        progressBar?.removeFromSuperview()
-        progressBar = nil
-        fsStoryImageView.af.cancelImageRequest()
-        print("prepareforreuse")
     }
     
+    func goToPrevStory() {
+        fsStoryImageView.image = nil
+        setImage(imageView: fsStoryImageView, strURL: profile!.stories[profile!.storiesSeenCount].contentUrl)
+        timestampLabel.text = profile!.stories[profile!.storiesSeenCount].timestamp
+        gradientView.addGradientBackground(firstColor: UIColor.getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? UIColor.getRandomColor())
+        progressBar!.rewind()
+        progressBar!.isPaused = true
+    }
+    
+    
+}
+
+// Handles gestures and taps inside the cell
+extension DetailCollectionViewCell {
     
     @IBAction func closeButtonTapped(_ sender: Any) {
         if profile!.storiesSeenCount < profile!.stories.count-1 {
@@ -320,36 +247,86 @@ class DetailCollectionViewCell: UICollectionViewCell {
     }
     
     
-    func getRandomColor() -> UIColor {
-        let randomRed:CGFloat = CGFloat(arc4random_uniform(256))
-        let randomGreen:CGFloat = CGFloat(arc4random_uniform(256))
-        let randomBlue:CGFloat = CGFloat(arc4random_uniform(256))
-        return UIColor(red: randomRed/255, green: randomGreen/255, blue: randomBlue/255, alpha: 1.0)
+    @objc func handleDismiss(sender: UISwipeGestureRecognizer) {
+        if sender.direction == .down {
+            if profile!.storiesSeenCount < profile!.stories.count-1 {
+                profile?.storiesSeenCount += 1
+            }
+            delegate?.dismissDetailViewController(currentStoryGroup: self.profile!)
+        }
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        progressBar!.isPaused = true
+        self.progressBar!.isHidden = true
+        UIView.animate(withDuration: 0.5, animations: {
+            self.stackView.alpha = 0.0
+        }, completion: nil)
+    }
     
-}
-
-extension DetailCollectionViewCell: UIGestureRecognizerDelegate {
-   /*func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        
-        if otherGestureRecognizer is UISwipeGestureRecognizer {
-            return true
-        }
-        return false
-
-        /*if (gestureRecognizer == mainScene.panRecognizer || gestureRecognizer == mainScene.pinchRecognizer) && otherGestureRecognizer == mainScene.tapRecognizer {
-            return true
-        }*/
-    }*/
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        UIView.animate(withDuration: 0.5, animations: {
+            self.stackView.alpha = 1.0
+        }, completion: nil)
+        self.progressBar?.isHidden = false
+        self.progressBar?.isPaused = false
+    }
     
-    /*func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer is UITapGestureRecognizer {
-            return true
+    @objc func handleHorizontalSwipe(sender: UISwipeGestureRecognizer) {
+        if sender.direction == .right {
+            print("right swipe happening", sender.numberOfTouches)
+            delegate?.goToPreviousStoryGroup(currentStoryGroup: self.profile!)
         }
-        return false
-    }*/
-
+        if sender.direction == .left {
+            print("left swipe happening", sender.numberOfTouches)
+            delegate?.goToNextStoryGroup(currentStoryGroup: self.profile!)
+        }
+    }
+    
+    @objc func longPressed(sender: UILongPressGestureRecognizer) {
+        if sender.state == .ended {
+            progressBar!.isPaused = false
+            self.progressBar!.isHidden = false
+            UIView.animate(withDuration: 0.5, animations: {
+                self.stackView.alpha = 1.0
+            }, completion: nil)
+        }
+    }
+    
+    @objc func cellTapped(sender: UITapGestureRecognizer) {
+        if sender.state == .ended {
+            progressBar?.isHidden = false
+            progressBar?.isPaused = false
+            UIView.animate(withDuration: 0.5, animations: {
+                self.stackView.alpha = 1.0
+            }, completion: nil)
+            let touchPoint = sender.location(in: self)
+            if touchPoint.x < self.bounds.size.width/3 {
+                if profile!.storiesSeenCount > 0 {
+                    profile!.storiesSeenCount -= 1
+                    storyChangedByTapping = true
+                    goToPrevStory()
+                    storyChangedByTapping = false
+                } else {
+                    storyChangedByTapping = true
+                    delegate?.goToPreviousStoryGroup(currentStoryGroup: profile!)
+                    storyChangedByTapping = false
+                }
+            } else {
+                if profile!.storiesSeenCount <= profile!.stories.count-1 {
+                    profile!.storiesSeenCount += 1
+                    storyChangedByTapping = true
+                    goToNextStory()
+                    storyChangedByTapping = false
+                } else {
+                    storyChangedByTapping = true
+                    progressBar?.isPaused = true
+                    delegate?.goToNextStoryGroup(currentStoryGroup: profile!)
+                    storyChangedByTapping = false
+                }
+            }
+        }
+    }
 }
 
 extension DetailCollectionViewCell: SegmentedProgressBarDelegate {
@@ -361,16 +338,13 @@ extension DetailCollectionViewCell: SegmentedProgressBarDelegate {
             fsStoryImageView.image = nil
             setImage(imageView: fsStoryImageView, strURL: profile!.stories[index].contentUrl)
             timestampLabel.text = profile!.stories[index].timestamp
-            gradientView.addGradientBackground(firstColor: getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? getRandomColor())
+            gradientView.addGradientBackground(firstColor: UIColor.getRandomColor(), secondColor: (fsStoryImageView.image?.averageColor!) ?? UIColor.getRandomColor())
         }
     }
     
     func segmentedProgressBarFinished() {
-        //prepareForReuse()
         delegate?.goToNextStoryGroup(currentStoryGroup: profile!)
     }
-    
-    
 }
 
 

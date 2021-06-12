@@ -30,6 +30,7 @@ class DetailViewController: UIViewController {
         layout.animator = CubeAttributesAnimator()
         layout.scrollDirection = .horizontal
         detailCollectionView.collectionViewLayout = layout
+        detailCollectionView.isScrollEnabled = false
     }
     
     override func viewDidLayoutSubviews() {
@@ -63,6 +64,7 @@ extension DetailViewController: UICollectionViewDataSource, UICollectionViewDele
         if let _ = detailCollectionView.cellForItem(at: currentIndexPath) as? DetailCollectionViewCell {
             self.detailCollectionView.isUserInteractionEnabled = true
         }
+        
     }
     
    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

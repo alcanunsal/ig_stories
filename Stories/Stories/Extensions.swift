@@ -17,8 +17,6 @@ extension UIView{
         gradientLayer.endPoint = CGPoint(x: 1, y: 1)
         self.layer.insertSublayer(gradientLayer, at: 0)
     }
-    
-    
 }
 
 extension UIImage {
@@ -34,6 +32,15 @@ extension UIImage {
         context.render(outputImage, toBitmap: &bitmap, rowBytes: 4, bounds: CGRect(x: 0, y: 0, width: 1, height: 1), format: .RGBA8, colorSpace: nil)
 
         return UIColor(red: CGFloat(bitmap[0]) / 255, green: CGFloat(bitmap[1]) / 255, blue: CGFloat(bitmap[2]) / 255, alpha: CGFloat(bitmap[3]) / 255)
+    }
+}
+
+extension UIColor {
+    static func getRandomColor() -> UIColor {
+        let randomRed:CGFloat = CGFloat(arc4random_uniform(256))
+        let randomGreen:CGFloat = CGFloat(arc4random_uniform(256))
+        let randomBlue:CGFloat = CGFloat(arc4random_uniform(256))
+        return UIColor(red: randomRed/255, green: randomGreen/255, blue: randomBlue/255, alpha: 1.0)
     }
 }
 
