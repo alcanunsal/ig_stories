@@ -10,9 +10,7 @@
 		0689909D54E45510F8552E23 /* Pods_Stories_StoriesUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0312ED2F4CB32276BD003A /* Pods_Stories_StoriesUITests.framework */; };
 		51FF567F678215AE8E767FE1 /* Pods_StoriesTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA19595F8B46B77EB0BA0FCA /* Pods_StoriesTests.framework */; };
 		542572B99EBA2DE7FE28FDD5 /* Pods_Stories.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85D41C2555DD8E126B7A318E /* Pods_Stories.framework */; };
-		69BEA3D82670EB63000A7F73 /* StoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BEA3D72670EB63000A7F73 /* StoryViewController.swift */; };
 		69BEA3DE2670F09F000A7F73 /* SegmentedProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BEA3DD2670F09F000A7F73 /* SegmentedProgressBar.swift */; };
-		69BEA3F6267135A8000A7F73 /* StoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BEA3F5267135A8000A7F73 /* StoryCollectionViewCell.swift */; };
 		69BEA40A267143F1000A7F73 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BEA409267143F1000A7F73 /* DetailViewController.swift */; };
 		69BEA40F26714544000A7F73 /* DetailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BEA40E26714544000A7F73 /* DetailCollectionViewCell.swift */; };
 		69BEA4182671616E000A7F73 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BEA4172671616D000A7F73 /* Extensions.swift */; };
@@ -50,9 +48,7 @@
 
 /* Begin PBXFileReference section */
 		640B934325961EE3390EC820 /* Pods-StoriesTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StoriesTests.release.xcconfig"; path = "Target Support Files/Pods-StoriesTests/Pods-StoriesTests.release.xcconfig"; sourceTree = "<group>"; };
-		69BEA3D72670EB63000A7F73 /* StoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewController.swift; sourceTree = "<group>"; };
 		69BEA3DD2670F09F000A7F73 /* SegmentedProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedProgressBar.swift; sourceTree = "<group>"; };
-		69BEA3F5267135A8000A7F73 /* StoryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryCollectionViewCell.swift; sourceTree = "<group>"; };
 		69BEA409267143F1000A7F73 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		69BEA40E26714544000A7F73 /* DetailCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCollectionViewCell.swift; sourceTree = "<group>"; };
 		69BEA4172671616D000A7F73 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -144,15 +140,6 @@
 			path = "Segmented Progress Bar";
 			sourceTree = "<group>";
 		};
-		69BEA4132671485F000A7F73 /* old */ = {
-			isa = PBXGroup;
-			children = (
-				69BEA3D72670EB63000A7F73 /* StoryViewController.swift */,
-				69BEA3F5267135A8000A7F73 /* StoryCollectionViewCell.swift */,
-			);
-			path = old;
-			sourceTree = "<group>";
-		};
 		69DA719F2670C44C00C6CE90 = {
 			isa = PBXGroup;
 			children = (
@@ -178,7 +165,6 @@
 		69DA71AA2670C44C00C6CE90 /* Stories */ = {
 			isa = PBXGroup;
 			children = (
-				69BEA4132671485F000A7F73 /* old */,
 				69DA71F62670C65200C6CE90 /* Controller */,
 				69DA71F52670C63A00C6CE90 /* View */,
 				69DA71F32670C5FF00C6CE90 /* Model */,
@@ -481,8 +467,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				69BEA40A267143F1000A7F73 /* DetailViewController.swift in Sources */,
-				69BEA3F6267135A8000A7F73 /* StoryCollectionViewCell.swift in Sources */,
-				69BEA3D82670EB63000A7F73 /* StoryViewController.swift in Sources */,
 				69BEA40F26714544000A7F73 /* DetailCollectionViewCell.swift in Sources */,
 				69DA72082670D1F100C6CE90 /* MainStoryCollectionViewCell.swift in Sources */,
 				69DA71B02670C44C00C6CE90 /* HomepageViewController.swift in Sources */,
