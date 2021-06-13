@@ -92,10 +92,8 @@ extension DetailViewController: DetailCellDelegate {
         } else {
             let prevCellIndexPath = IndexPath(row: currentIndexPath.row-1, section: currentIndexPath.section)
             let rect = self.detailCollectionView.layoutAttributesForItem(at: prevCellIndexPath)?.frame
-            detailCollectionView.layoutIfNeeded()
             self.detailCollectionView.isUserInteractionEnabled = false
             self.detailCollectionView.scrollRectToVisible(rect!, animated: true)
-            detailCollectionView.setNeedsLayout()
         }
     }
     
@@ -107,10 +105,8 @@ extension DetailViewController: DetailCellDelegate {
         } else {
             let nextCellIndexPath = IndexPath(row: currentIndexPath.row+1, section: currentIndexPath.section)
             let rect = self.detailCollectionView.layoutAttributesForItem(at: nextCellIndexPath)?.frame
-            detailCollectionView.layoutIfNeeded()
             self.detailCollectionView.isUserInteractionEnabled = false
             self.detailCollectionView.scrollRectToVisible(rect!, animated: true)
-            self.detailCollectionView.setNeedsLayout()
         }
     }
     
