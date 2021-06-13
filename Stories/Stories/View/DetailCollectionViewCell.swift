@@ -50,9 +50,10 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         let swipeRightGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleHorizontalSwipe))
         
         tapGesture.delegate = self
+        
         addGestureRecognizer(tapGesture)
         
-        longPressGesture.minimumPressDuration = 0.5
+        longPressGesture.minimumPressDuration = 0.7
         longPressGesture.delegate = self
         addGestureRecognizer(longPressGesture)
         
@@ -198,8 +199,8 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
                                                 self.activityIndicator.isHidden = true
                                                 if self.progressBar!.isPaused {
                                                     self.progressBar!.isPaused = false
-                                                    self.setNeedsLayout()
-                                                    self.setNeedsDisplay()
+                                                    //self.setNeedsLayout()
+                                                    //self.setNeedsDisplay()
                                                 }
                                             }
                                         }
@@ -258,17 +259,21 @@ extension DetailCollectionViewCell {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         progressBar!.isPaused = true
-        self.progressBar!.isHidden = true
+        //self.progressBar!.isHidden = true
+        //self.stackView.alpha = 0.0
         UIView.animate(withDuration: 0.5, animations: {
             self.stackView.alpha = 0.0
+            self.progressBar?.alpha = 0.0
         }, completion: nil)
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        UIView.animate(withDuration: 0.5, animations: {
+        /*UIView.animate(withDuration: 0.5, animations: {
             self.stackView.alpha = 1.0
-        }, completion: nil)
-        self.progressBar?.isHidden = false
+        }, completion: nil)*/
+        self.stackView.alpha = 1.0
+        self.progressBar?.alpha = 1.0
+        //self.progressBar?.isHidden = false
         self.progressBar?.isPaused = false
     }
     
@@ -284,22 +289,35 @@ extension DetailCollectionViewCell {
     }
     
     @objc func longPressed(sender: UILongPressGestureRecognizer) {
+        print("************longtap:", sender.state.rawValue)
         if sender.state == .ended {
             progressBar!.isPaused = false
-            self.progressBar!.isHidden = false
-            UIView.animate(withDuration: 0.5, animations: {
+            //self.progressBar!.isHidden = false
+            self.progressBar?.alpha = 1.0
+            /*UIView.animate(withDuration: 0.5, animations: {
                 self.stackView.alpha = 1.0
-            }, completion: nil)
+            }, completion: nil)*/
+            self.stackView.alpha = 1.0
+            /*if let grs = self.gestureRecognizers {
+                for gr in grs {
+                    gr.isEnabled = true
+                    if !(gr == sender){
+                        
+                    }
+                }
+            }*/
         }
     }
     
     @objc func cellTapped(sender: UITapGestureRecognizer) {
         if sender.state == .ended {
-            progressBar?.isHidden = false
+            //progressBar?.isHidden = false
+            self.progressBar?.alpha = 1.0
             progressBar?.isPaused = false
-            UIView.animate(withDuration: 0.5, animations: {
+            self.stackView.alpha = 1.0
+            /*UIView.animate(withDuration: 0.5, animations: {
                 self.stackView.alpha = 1.0
-            }, completion: nil)
+            }, completion: nil)*/
             let touchPoint = sender.location(in: self)
             if touchPoint.x < self.bounds.size.width/3 {
                 if profile!.storiesSeenCount > 0 {
@@ -326,6 +344,13 @@ extension DetailCollectionViewCell {
                 }
             }
         }
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer is UITapGestureRecognizer && otherGestureRecognizer is UILongPressGestureRecognizer {
+            return false
+        }
+        return true
     }
 }
 
