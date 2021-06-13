@@ -88,7 +88,7 @@ extension DetailViewController: DetailCellDelegate {
         let currentIndexPath = detailCollectionView.indexPathsForVisibleItems[0]
         profiles![profiles!.firstIndex{$0.username == currentStoryGroup.username}!] = currentStoryGroup
         if currentIndexPath.row == 0{
-            self.dismiss(animated: true, completion: nil)
+            dismissDetailViewController(currentStoryGroup: currentStoryGroup)
         } else {
             let prevCellIndexPath = IndexPath(row: currentIndexPath.row-1, section: currentIndexPath.section)
             let rect = self.detailCollectionView.layoutAttributesForItem(at: prevCellIndexPath)?.frame
@@ -103,7 +103,7 @@ extension DetailViewController: DetailCellDelegate {
         let currentIndexPath = detailCollectionView.indexPathsForVisibleItems[0]
         profiles![profiles!.firstIndex{$0.username == currentStoryGroup.username}!] = currentStoryGroup
         if currentIndexPath.row == profiles!.count-1 {
-            self.dismiss(animated: true, completion: nil)
+            dismissDetailViewController(currentStoryGroup: currentStoryGroup)
         } else {
             let nextCellIndexPath = IndexPath(row: currentIndexPath.row+1, section: currentIndexPath.section)
             let rect = self.detailCollectionView.layoutAttributesForItem(at: nextCellIndexPath)?.frame
