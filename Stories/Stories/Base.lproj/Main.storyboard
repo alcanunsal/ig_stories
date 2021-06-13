@@ -24,21 +24,21 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
                             <collectionView clipsSubviews="YES" contentMode="top" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="ZhD-1A-Ala" userLabel="Main Stories Collection View">
-                                <rect key="frame" x="10" y="99" width="394" height="161"/>
+                                <rect key="frame" x="10" y="99" width="394" height="179"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="6lg-QL-QcR">
-                                    <size key="itemSize" width="110" height="110"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="50" id="6lg-QL-QcR">
+                                    <size key="itemSize" width="110" height="120"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="5" minY="0.0" maxX="5" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" contentMode="center" reuseIdentifier="MainStoryCell" id="yEr-6n-5gz" customClass="MainStoryCollectionViewCell" customModule="Stories" customModuleProvider="target">
-                                        <rect key="frame" x="5" y="23.5" width="110" height="114"/>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" contentMode="center" reuseIdentifier="MainStoryCell" translatesAutoresizingMaskIntoConstraints="NO" id="yEr-6n-5gz" customClass="MainStoryCollectionViewCell" customModule="Stories" customModuleProvider="target">
+                                        <rect key="frame" x="5" y="29.5" width="110" height="120"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="U0N-pt-jjg">
-                                            <rect key="frame" x="0.0" y="0.0" width="110" height="114"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="yhZ-ND-oN7">
+                                            <rect key="frame" x="0.0" y="0.0" width="110" height="120"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <subviews>
                                                 <view contentMode="scaleAspectFit" id="kCA-Qk-DdL" userLabel="ProfileImageCircleView">
                                                     <rect key="frame" x="15" y="5" width="80" height="80"/>
@@ -60,24 +60,16 @@
                                                         <constraint firstItem="aEc-hW-2SG" firstAttribute="width" secondItem="kCA-Qk-DdL" secondAttribute="width" constant="-10" id="hsK-JM-qP5"/>
                                                     </constraints>
                                                 </view>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xR4-9e-Sb8" userLabel="ProfileNameLabel">
-                                                    <rect key="frame" x="5" y="90" width="100" height="0.0"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xR4-9e-Sb8" userLabel="ProfileNameLabel">
+                                                    <rect key="frame" x="5" y="90" width="0.0" height="0.0"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="14"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="xR4-9e-Sb8" secondAttribute="trailing" constant="5" id="4uR-iy-rr2"/>
-                                                <constraint firstItem="xR4-9e-Sb8" firstAttribute="top" secondItem="kCA-Qk-DdL" secondAttribute="bottom" constant="5" id="6tx-ee-ILz"/>
-                                                <constraint firstItem="kCA-Qk-DdL" firstAttribute="centerX" secondItem="U0N-pt-jjg" secondAttribute="centerX" id="ImW-5w-ccz"/>
-                                                <constraint firstItem="kCA-Qk-DdL" firstAttribute="top" secondItem="U0N-pt-jjg" secondAttribute="top" constant="5" id="O1x-Sv-179"/>
-                                                <constraint firstItem="kCA-Qk-DdL" firstAttribute="height" secondItem="U0N-pt-jjg" secondAttribute="height" multiplier="0.7" id="lUi-Xh-BTM"/>
-                                                <constraint firstItem="xR4-9e-Sb8" firstAttribute="leading" secondItem="U0N-pt-jjg" secondAttribute="leading" constant="5" id="uDP-Py-f0R"/>
-                                            </constraints>
                                         </collectionViewCellContentView>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <size key="customSize" width="110" height="114"/>
                                         <connections>
                                             <outlet property="profileImageCircleView" destination="kCA-Qk-DdL" id="t7i-f5-U8e"/>
                                             <outlet property="profileImageView" destination="aEc-hW-2SG" id="TOY-FZ-ubO"/>
@@ -86,18 +78,18 @@
                                         </connections>
                                     </collectionViewCell>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Ibf-97-1An">
-                                        <rect key="frame" x="125" y="25.5" width="110" height="110"/>
+                                        <rect key="frame" x="125" y="29.5" width="110" height="120"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="vLt-zY-AYr">
-                                            <rect key="frame" x="0.0" y="0.0" width="110" height="110"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="110" height="120"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </collectionViewCellContentView>
                                     </collectionViewCell>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="RDu-jS-4Eo">
-                                        <rect key="frame" x="245" y="25.5" width="110" height="110"/>
+                                        <rect key="frame" x="245" y="29.5" width="110" height="120"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="SbH-C6-zyd">
-                                            <rect key="frame" x="0.0" y="0.0" width="110" height="110"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="110" height="120"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </collectionViewCellContentView>
                                     </collectionViewCell>
@@ -111,7 +103,7 @@
                             <constraint firstItem="Sro-HI-cH1" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.05" id="2jc-Wx-rje"/>
                             <constraint firstItem="Sro-HI-cH1" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="10" id="KdA-dC-nMM"/>
                             <constraint firstItem="Sro-HI-cH1" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="MKm-xE-Trz"/>
-                            <constraint firstItem="ZhD-1A-Ala" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.18" id="Q7f-Eb-euv"/>
+                            <constraint firstItem="ZhD-1A-Ala" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.2" id="Q7f-Eb-euv"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ZhD-1A-Ala" secondAttribute="trailing" constant="10" id="RR3-4O-AuH"/>
                             <constraint firstItem="ZhD-1A-Ala" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="10" id="a7T-AI-Zbe"/>
                             <constraint firstItem="Sro-HI-cH1" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="0.3" id="caC-Y8-W2e"/>

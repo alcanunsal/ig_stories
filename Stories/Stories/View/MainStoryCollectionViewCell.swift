@@ -25,12 +25,17 @@ class MainStoryCollectionViewCell: UICollectionViewCell {
     }
     
     func configureSubviews(){
+        self.profileImageCircleView.frame = CGRect(x: 0, y: 0, width: 0.8*self.contentView.frame.size.height, height: 0.8*self.contentView.frame.size.height)
+        self.profileImageView.frame.size = CGSize(width: 0.8*self.contentView.frame.size.width, height: 0.8*self.contentView.frame.size.width)
+        self.profileImageView.center = CGPoint(x: self.profileImageCircleView.frame.size.width/2, y: self.profileImageCircleView.frame.size.height/2)
+        self.profileNameLabel.frame = CGRect(x: self.profileImageCircleView.frame.minX, y: self.profileImageCircleView.frame.maxY+3, width: self.contentView.frame.size.width, height: 0.18*self.contentView.frame.size.height)
+        translatesAutoresizingMaskIntoConstraints = true
         profileImageView.layer.borderColor = UIColor.white.cgColor
         
         profileImageCircleView.layer.borderColor = #colorLiteral(red: 0.5810584426, green: 0.1285524964, blue: 0.5745313764, alpha: 1)
         profileImageCircleView.layer.cornerRadius = profileImageCircleView.frame.size.width/2
         profileImageView.layer.cornerRadius = profileImageView.frame.size.width/2
-        profileImageView.layer.borderWidth = 1
+        profileImageView.layer.borderWidth = 0.5
         profileImageCircleView.layer.borderWidth = 3
         profileImageView.translatesAutoresizingMaskIntoConstraints = true
         
