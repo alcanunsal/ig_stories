@@ -67,6 +67,10 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
             self.performSegue(withIdentifier: "HomeToStoryDetailSegue", sender: cell)
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: self.storiesCollectionView.frame.size.width/4, height: 1.2*self.storiesCollectionView.frame.size.width/4)
+    }
 }
 
 extension HomepageViewController: DetailViewControllerDelegate {
