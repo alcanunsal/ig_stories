@@ -31,6 +31,7 @@ class SegmentedProgressBar: UIView {
     var isPaused: Bool = false {
         didSet {
             if isPaused {
+                print("isPaused")
                 for segment in segments {
                     let layer = segment.topSegmentView.layer
                     let pausedTime = layer.convertTime(CACurrentMediaTime(), from: nil)
@@ -38,6 +39,7 @@ class SegmentedProgressBar: UIView {
                     layer.timeOffset = pausedTime
                 }
             } else {
+                print("isPaused not")
                 let segment = segments[currentAnimationIndex]
                 let layer = segment.topSegmentView.layer
                 let pausedTime = layer.timeOffset

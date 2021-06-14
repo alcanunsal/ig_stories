@@ -34,6 +34,19 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         return activityInd
     } ()
     
+    var isFullyVisible:Bool = false {
+        didSet {
+            print("isFullyVisible", isFullyVisible, self.profile?.username)
+            if isFullyVisible {
+                if self.fsStoryImageView.image != nil {
+                    self.progressBar?.isPaused = false
+                }
+            } else {
+                self.progressBar?.isPaused = true
+            }
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -46,14 +59,12 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped(sender:)))
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(sender:)))
         let swipeDownGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleDismiss))
-        let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleHorizontalSwipe))
-        let swipeRightGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleHorizontalSwipe))
         
         tapGesture.delegate = self
         
         addGestureRecognizer(tapGesture)
         
-        longPressGesture.minimumPressDuration = 0.7
+        longPressGesture.minimumPressDuration = 0.6
         longPressGesture.delegate = self
         addGestureRecognizer(longPressGesture)
         
@@ -61,23 +72,17 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         swipeDownGesture.delegate = self
         addGestureRecognizer(swipeDownGesture)
         
-        swipeLeftGesture.direction = .left
-        swipeLeftGesture.delegate = self
-        addGestureRecognizer(swipeLeftGesture)
-        
-        swipeRightGesture.direction = .right
-        swipeRightGesture.delegate = self
-        addGestureRecognizer(swipeRightGesture)
-        
         tapGesture.require(toFail: swipeDownGesture)
         tapGesture.require(toFail: longPressGesture)
         swipeDownGesture.require(toFail: longPressGesture)
-        swipeLeftGesture.require(toFail: longPressGesture)
-        swipeRightGesture.require(toFail: longPressGesture)
     }
     
     func setProfile(profile:Profile) {
         self.profile = profile
+    }
+    
+    func getProfile() -> Profile {
+        return self.profile!
     }
     
     override func layoutSubviews() {
@@ -86,15 +91,6 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         ppImageView.clipsToBounds = true
         ppImageView.layer.masksToBounds = true
         stackView.alpha = 1.0
-        if let _ = self.progressBar {
-            if progressBar!.isPaused {
-                progressBar?.alpha = 1.0
-                progressBar?.isHidden = false
-                if fsStoryImageView.image != nil {
-                    progressBar?.isPaused = false
-                }
-            }
-        }
     }
     
     override func prepareForReuse() {
@@ -107,6 +103,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         ppImageView.af.cancelImageRequest()
         progressBar?.removeFromSuperview()
         progressBar = nil
+        isFullyVisible = false
         fsStoryImageView.af.cancelImageRequest()
     }
     
@@ -153,7 +150,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         let constraintCenterX = NSLayoutConstraint(item: progressContainerView!, attribute: .centerX, relatedBy: .equal, toItem: progressBar, attribute: .centerX, multiplier: 1, constant: 0)
         progressContainerView.addConstraint(constraintTrailing)
         progressContainerView.addConstraint(constraintCenterX)
-        self.progressBar!.startAnimation(withDelay: 0.5)
+        self.progressBar!.startAnimation(withDelay: 1.0)
         if profile!.storiesSeenCount > 0 {
             let currentIndex = getCurrentStoryIndex()
             if currentIndex > 0 {
@@ -183,10 +180,12 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
                                             DispatchQueue.main.async {
                                                 self.activityIndicator.stopAnimating()
                                                 self.activityIndicator.isHidden = true
-                                                if self.progressBar!.isPaused {
-                                                    self.progressBar!.isPaused = false
-                                                    //self.setNeedsLayout()
-                                                    //self.setNeedsDisplay()
+                                                if self.isFullyVisible {
+                                                    if self.progressBar!.isPaused {
+                                                        self.progressBar!.isPaused = false
+                                                        //self.setNeedsLayout()
+                                                        //self.setNeedsDisplay()
+                                                    }
                                                 }
                                             }
                                         }
@@ -243,6 +242,7 @@ extension DetailCollectionViewCell {
         }
     }
     
+    /*
     @objc func handleHorizontalSwipe(sender: UISwipeGestureRecognizer) {
         if sender.direction == .right {
             progressBar?.delegate = nil
@@ -252,7 +252,7 @@ extension DetailCollectionViewCell {
             progressBar?.delegate = nil
             delegate?.goToNextStoryGroup(currentStoryGroup: self.profile!)
         }
-    }
+    }*/
     
     /// Changes header (top stack view and progress bar) visibility and starts/stops progress bar according to parameters
     func changeHeaderVisibility(makeVisible:Bool, animated:Bool) {
@@ -281,17 +281,30 @@ extension DetailCollectionViewCell {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        delegate?.userInteractionEnded()
         changeHeaderVisibility(makeVisible: true, animated: false)
     }
     
     @objc func longPressed(sender: UILongPressGestureRecognizer) {
-        if sender.state == .ended {
+        switch sender.state {
+        case .began:
+            delegate?.userInteractionInProgress()
+        case .cancelled, .failed:
+            delegate?.userInteractionEnded()
+        case .ended:
+            delegate?.userInteractionEnded()
             changeHeaderVisibility(makeVisible: true, animated: false)
+        case .changed, .possible, .recognized:
+            print("longPressed state", sender.state.rawValue)
+            return
+        @unknown default:
+            delegate?.userInteractionEnded()
         }
     }
     
     @objc func cellTapped(sender: UITapGestureRecognizer) {
         if sender.state == .ended {
+            delegate?.userInteractionEnded()
             storyChangedByTapping = true
             changeHeaderVisibility(makeVisible: true, animated: false)
             let touchPoint = sender.location(in: self)
@@ -300,8 +313,8 @@ extension DetailCollectionViewCell {
                     profile!.storiesSeenCount -= 1
                     goToPrevStory()
                 } else {
-                    progressBar?.delegate = nil
                     progressBar?.isPaused = true
+                    progressBar?.delegate = nil
                     delegate?.goToPreviousStoryGroup(currentStoryGroup: profile!)
                 }
             } else {
