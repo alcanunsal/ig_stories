@@ -72,7 +72,6 @@ class MainStoryCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
         profileImageView.image = nil
         profileNameLabel.text = ""
-        configureSubviews()
     }
     
 }

@@ -44,7 +44,7 @@
                                                     <rect key="frame" x="15" y="5" width="80" height="80"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aEc-hW-2SG" userLabel="Profile Image View">
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gray" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aEc-hW-2SG" userLabel="Profile Image View">
                                                             <rect key="frame" x="5" y="5" width="70" height="70"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" secondItem="aEc-hW-2SG" secondAttribute="height" multiplier="1:1" id="xTM-KM-DKI"/>
@@ -76,22 +76,6 @@
                                             <outlet property="profileNameLabel" destination="xR4-9e-Sb8" id="kKu-Y4-rkj"/>
                                             <segue destination="TMl-88-Mip" kind="presentation" identifier="HomeToStoryDetailSegue" modalPresentationStyle="fullScreen" id="0nJ-VK-Uz0"/>
                                         </connections>
-                                    </collectionViewCell>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Ibf-97-1An">
-                                        <rect key="frame" x="125" y="29.5" width="110" height="120"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="vLt-zY-AYr">
-                                            <rect key="frame" x="0.0" y="0.0" width="110" height="120"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </collectionViewCellContentView>
-                                    </collectionViewCell>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="RDu-jS-4Eo">
-                                        <rect key="frame" x="245" y="29.5" width="110" height="120"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="SbH-C6-zyd">
-                                            <rect key="frame" x="0.0" y="0.0" width="110" height="120"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </collectionViewCellContentView>
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
@@ -152,7 +136,7 @@
                                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="SPe-NX-7NB">
                                                     <rect key="frame" x="10" y="30" width="404" height="58.5"/>
                                                     <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="BKd-Wy-5fn">
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gray" translatesAutoresizingMaskIntoConstraints="NO" id="BKd-Wy-5fn">
                                                             <rect key="frame" x="0.0" y="0.0" width="58.5" height="58.5"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" secondItem="BKd-Wy-5fn" secondAttribute="height" multiplier="1:1" id="B0g-50-1qv"/>
@@ -253,6 +237,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="gray" width="884" height="1429"/>
         <image name="stories" width="946" height="236"/>
         <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">

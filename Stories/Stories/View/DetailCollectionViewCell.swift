@@ -21,8 +21,8 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
     @IBOutlet weak var gradientView: UIView!
     
     private var profile:Profile?
-    var delegate:DetailCellDelegate?
     private var storyChangedByTapping = false
+    var delegate:DetailCellDelegate?
     
     var progressBar: SegmentedProgressBar?
     lazy var activityIndicator: UIActivityIndicatorView! = {
@@ -34,9 +34,9 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         return activityInd
     } ()
     
+    // variable that is true when the cell is fully visible in the screen
     var isFullyVisible:Bool = false {
         didSet {
-            print("isFullyVisible", isFullyVisible, self.profile?.username)
             if isFullyVisible {
                 if self.fsStoryImageView.image != nil {
                     self.progressBar?.isPaused = false
@@ -61,7 +61,6 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         let swipeDownGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleDismiss))
         
         tapGesture.delegate = self
-        
         addGestureRecognizer(tapGesture)
         
         longPressGesture.minimumPressDuration = 0.6
@@ -75,21 +74,14 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         tapGesture.require(toFail: swipeDownGesture)
         tapGesture.require(toFail: longPressGesture)
         swipeDownGesture.require(toFail: longPressGesture)
-    }
-    
-    func setProfile(profile:Profile) {
-        self.profile = profile
-    }
-    
-    func getProfile() -> Profile {
-        return self.profile!
+        
+        ppImageView.layer.cornerRadius = ppImageView.frame.size.width/2
+        ppImageView.clipsToBounds = true
+        ppImageView.layer.masksToBounds = true
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        ppImageView.layer.cornerRadius = ppImageView.frame.size.width/2
-        ppImageView.clipsToBounds = true
-        ppImageView.layer.masksToBounds = true
         stackView.alpha = 1.0
         progressBar?.alpha = 1.0
     }
@@ -102,10 +94,10 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         ppImageView.image = nil
         fsStoryImageView.image = nil
         ppImageView.af.cancelImageRequest()
+        fsStoryImageView.af.cancelImageRequest()
         progressBar?.removeFromSuperview()
         progressBar = nil
         isFullyVisible = false
-        fsStoryImageView.af.cancelImageRequest()
     }
     
     func getCurrentStoryIndex() -> Int {
@@ -116,7 +108,15 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         return currentStoryIndex
     }
     
-    func configureCell(withProfile prof:Profile) {
+    func setProfile(profile:Profile) {
+        self.profile = profile
+    }
+    
+    func getProfile() -> Profile {
+        return self.profile!
+    }
+    
+    func configureCell() {
         self.userNameLabel.text = self.profile!.username
         self.gradientView.frame.size = self.fsStoryImageView.frame.size
         setImage(imageView: ppImageView, strURL: profile!.profilePicUrl, isPp: true)
@@ -151,7 +151,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         let constraintCenterX = NSLayoutConstraint(item: progressContainerView!, attribute: .centerX, relatedBy: .equal, toItem: progressBar, attribute: .centerX, multiplier: 1, constant: 0)
         progressContainerView.addConstraint(constraintTrailing)
         progressContainerView.addConstraint(constraintCenterX)
-        self.progressBar!.startAnimation(withDelay: 1.0)
+        self.progressBar!.startAnimation(withDelay: 0.5)
         if profile!.storiesSeenCount > 0 {
             let currentIndex = getCurrentStoryIndex()
             if currentIndex > 0 {
@@ -167,9 +167,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
     
     func setImage(imageView: UIImageView, strURL: String, isPp: Bool = false) {
         if !isPp {
-            if !self.progressBar!.isPaused {
-                self.progressBar!.isPaused = true
-            }
+            pauseProgressBar()
             activityIndicator.isHidden = false
             activityIndicator.startAnimating()
         }
@@ -184,18 +182,25 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
                                                 if self.isFullyVisible {
                                                     if self.progressBar!.isPaused {
                                                         self.progressBar!.isPaused = false
-                                                        //self.setNeedsLayout()
-                                                        //self.setNeedsDisplay()
                                                     }
                                                 }
                                             }
                                         }
                                     case .failure(let err):
+                                        if !isPp {
+                                            self.storyImageCannotBeFetched()
+                                        } else {
+                                            self.ppImageCannotBeFetched()
+                                        }
                                         print(err)
                                     }
             })
         } else {
-            imageView.image = UIImage(named: "xmark")
+            if !isPp {
+                storyImageCannotBeFetched()
+            } else {
+                ppImageCannotBeFetched()
+            }
         }
     }
     
@@ -220,7 +225,34 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         progressBar!.isPaused = true
     }
     
+    func pauseProgressBar(){
+        if !progressBar!.isPaused {
+            progressBar?.isPaused = true
+        }
+    }
     
+    func continueProgressBar() {
+        progressBar?.startAnimation()
+    }
+    
+    func storyImageCannotBeFetched() {
+        DispatchQueue.main.async {
+            self.activityIndicator.stopAnimating()
+            self.activityIndicator.isHidden = true
+            self.fsStoryImageView.image = UIImage(named: "badlink")
+            if self.isFullyVisible {
+                if self.progressBar!.isPaused {
+                    self.progressBar!.isPaused = false
+                }
+            }
+        }
+    }
+    
+    func ppImageCannotBeFetched() {
+        DispatchQueue.main.async {
+            self.ppImageView.image = UIImage(named: "gray")
+        }
+    }
 }
 
 // Handles gestures and taps inside the cell
@@ -242,18 +274,6 @@ extension DetailCollectionViewCell {
             dismissVC()
         }
     }
-    
-    /*
-    @objc func handleHorizontalSwipe(sender: UISwipeGestureRecognizer) {
-        if sender.direction == .right {
-            progressBar?.delegate = nil
-            delegate?.goToPreviousStoryGroup(currentStoryGroup: self.profile!)
-        }
-        if sender.direction == .left {
-            progressBar?.delegate = nil
-            delegate?.goToNextStoryGroup(currentStoryGroup: self.profile!)
-        }
-    }*/
     
     /// Changes header (top stack view and progress bar) visibility and starts/stops progress bar according to parameters
     func changeHeaderVisibility(makeVisible:Bool, animated:Bool) {
@@ -300,7 +320,6 @@ extension DetailCollectionViewCell {
             delegate?.userInteractionEnded()
             changeHeaderVisibility(makeVisible: true, animated: false)
         case .changed, .possible, .recognized:
-            print("longPressed state", sender.state.rawValue)
             return
         @unknown default:
             delegate?.userInteractionEnded()

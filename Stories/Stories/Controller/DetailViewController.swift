@@ -16,9 +16,12 @@ class DetailViewController: UIViewController {
     fileprivate var needsDelayedScrolling = false
     var delegate: DetailViewControllerDelegate?
     
+    
     override func viewWillAppear(_ animated: Bool){
         super.viewWillAppear(animated)
         self.needsDelayedScrolling = true
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationWillResignActive), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
     
     override func viewDidLoad() {
@@ -30,7 +33,6 @@ class DetailViewController: UIViewController {
         layout.animator = CubeAttributesAnimator()
         layout.scrollDirection = .horizontal
         detailCollectionView.collectionViewLayout = layout
-        //detailCollectionView.isScrollEnabled = false
         detailCollectionView.isUserInteractionEnabled = true
         detailCollectionView.isPrefetchingEnabled = false
     }
@@ -50,6 +52,10 @@ class DetailViewController: UIViewController {
             firstCell.isFullyVisible = true
         }
     }
+    
+    func updateProfilesData(withData data:Profile) {
+        profiles![profiles!.firstIndex{$0.username == data.username}!] = data
+    }
 }
 
 extension DetailViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
@@ -61,7 +67,7 @@ extension DetailViewController: UICollectionViewDataSource, UICollectionViewDele
         let cell = detailCollectionView.dequeueReusableCell(withReuseIdentifier: "CubicCell", for: indexPath) as! DetailCollectionViewCell
         cell.setProfile(profile: profiles![indexPath.row])
         cell.configureProgressBar()
-        cell.configureCell(withProfile: profiles![indexPath.row])
+        cell.configureCell()
         cell.delegate = self
         return cell
     }
@@ -75,7 +81,6 @@ extension DetailViewController: UICollectionViewDataSource, UICollectionViewDele
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        print("scrollViewDidEndDecelerating")
         if detailCollectionView.fullyVisibleCells.count > 0 {
             for cell in detailCollectionView.fullyVisibleCells {
                 if let c = cell as? DetailCollectionViewCell {
@@ -88,7 +93,6 @@ extension DetailViewController: UICollectionViewDataSource, UICollectionViewDele
     }
     
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        print("scrollViewDidEndScrollingAnimation")
         self.detailCollectionView.isUserInteractionEnabled = true
         if detailCollectionView.fullyVisibleCells.count > 0 {
             for cell in detailCollectionView.fullyVisibleCells {
@@ -102,7 +106,6 @@ extension DetailViewController: UICollectionViewDataSource, UICollectionViewDele
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        print("willbegindragging")
         let visibleIndexPath = detailCollectionView.indexPathsForVisibleItems[0]
         let leftIndexPath = IndexPath(row: visibleIndexPath.row-1, section: visibleIndexPath.section)
         let rightIndexPath = IndexPath(row: visibleIndexPath.row+1, section: visibleIndexPath.section)
@@ -118,10 +121,9 @@ extension DetailViewController: UICollectionViewDataSource, UICollectionViewDele
     }
     
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        print("didEndDisplaying")
         if let c = cell as? DetailCollectionViewCell {
             c.progressBar?.delegate = nil
-            profiles![profiles!.firstIndex{$0.username == c.getProfile().username}!] = c.getProfile()
+            updateProfilesData(withData: c.getProfile())
         }
     }
 }
@@ -129,14 +131,14 @@ extension DetailViewController: UICollectionViewDataSource, UICollectionViewDele
 extension DetailViewController: DetailCellDelegate {
     
     func dismissDetailViewController(currentStoryGroup: Profile) {
-        profiles![profiles!.firstIndex{$0.username == currentStoryGroup.username}!] = currentStoryGroup
+        updateProfilesData(withData: currentStoryGroup)
         delegate?.detailViewControllerWillDismiss(data: profiles!)
         self.dismiss(animated: true, completion: nil)
     }
 
     func goToPreviousStoryGroup(currentStoryGroup:Profile) {
         let currentIndexPath = detailCollectionView.indexPathsForVisibleItems[0]
-        profiles![profiles!.firstIndex{$0.username == currentStoryGroup.username}!] = currentStoryGroup
+        updateProfilesData(withData: currentStoryGroup)
         if currentIndexPath.row == 0{
             dismissDetailViewController(currentStoryGroup: currentStoryGroup)
         } else {
@@ -149,7 +151,7 @@ extension DetailViewController: DetailCellDelegate {
     
     func goToNextStoryGroup(currentStoryGroup:Profile) {
         let currentIndexPath = detailCollectionView.indexPathsForVisibleItems[0]
-        profiles![profiles!.firstIndex{$0.username == currentStoryGroup.username}!] = currentStoryGroup
+        updateProfilesData(withData: currentStoryGroup)
         if currentIndexPath.row == profiles!.count-1 {
             dismissDetailViewController(currentStoryGroup: currentStoryGroup)
         } else {
@@ -161,24 +163,41 @@ extension DetailViewController: DetailCellDelegate {
     }
     
     func userInteractionInProgress() {
-        /*self.detailCollectionView.isUserInteractionEnabled = false
+        self.detailCollectionView.isUserInteractionEnabled = false
         self.detailCollectionView.isScrollEnabled = false
         let count = self.view.gestureRecognizers?.count ?? 0
         for i in 0..<count {
             self.view.gestureRecognizers![i].isEnabled = false
-        }*/
+        }
     }
     
     func userInteractionEnded() {
-        /*self.detailCollectionView.isScrollEnabled = true
+        self.detailCollectionView.isScrollEnabled = true
         self.detailCollectionView.isUserInteractionEnabled = true
         let count = self.view.gestureRecognizers?.count ?? 0
         for i in 0..<count {
             self.view.gestureRecognizers![i].isEnabled = true
-        }*/
+        }
     }
-    
-    
+}
+
+// functions to pause and restore state when application goes to background and comes to foreground
+extension DetailViewController {
+    @objc private func applicationWillResignActive() {
+        for cell in detailCollectionView.visibleCells {
+            if let c = cell as? DetailCollectionViewCell {
+                c.pauseProgressBar()
+            }
+        }
+    }
+
+    @objc private func applicationDidBecomeActive() {
+        for cell in detailCollectionView.visibleCells {
+            if let c = cell as? DetailCollectionViewCell {
+                c.continueProgressBar()
+            }
+        }
+    }
 }
 
 protocol DetailViewControllerDelegate {
