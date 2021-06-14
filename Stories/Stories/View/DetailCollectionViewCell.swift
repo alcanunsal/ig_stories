@@ -91,6 +91,7 @@ class DetailCollectionViewCell: UICollectionViewCell, UIGestureRecognizerDelegat
         ppImageView.clipsToBounds = true
         ppImageView.layer.masksToBounds = true
         stackView.alpha = 1.0
+        progressBar?.alpha = 1.0
     }
     
     override func prepareForReuse() {
@@ -265,15 +266,17 @@ extension DetailCollectionViewCell {
             }
         } else {
             // header (username, timestamp, profile pic etc) will be hidden
-            progressBar!.isPaused = true
-            if animated {
-                UIView.animate(withDuration: 0.5, animations: {
+            if isFullyVisible {
+                progressBar!.isPaused = true
+                if animated {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        self.stackView.alpha = 0.0
+                        self.progressBar?.alpha = 0.0
+                    }, completion: nil)
+                } else {
                     self.stackView.alpha = 0.0
                     self.progressBar?.alpha = 0.0
-                }, completion: nil)
-            } else {
-                self.stackView.alpha = 0.0
-                self.progressBar?.alpha = 0.0
+                }
             }
         }
     }
