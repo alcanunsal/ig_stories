@@ -260,7 +260,9 @@ extension DetailCollectionViewCell {
             // header (username, timestamp, profile pic etc) will be made visible
             self.stackView.alpha = 1.0
             self.progressBar?.alpha = 1.0
-            self.progressBar?.isPaused = false
+            if isFullyVisible {
+                self.progressBar?.isPaused = false
+            }
         } else {
             // header (username, timestamp, profile pic etc) will be hidden
             progressBar!.isPaused = true
